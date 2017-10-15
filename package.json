@@ -1,0 +1,28 @@
+{
+  "name": "made-together-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "server": "NODE_ENV=dev nodemon server.js",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "helmet": "^3.9.0",
+    "jsonwebtoken": "^8.1.0",
+    "mongodb": "^2.2.33",
+    "mongoose": "^4.12.2",
+    "passport": "^0.4.0",
+    "passport-jwt": "^3.0.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  }
+}
