@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "DEBUG=express:* nodemon server.js",
     "server": "NODE_ENV=dev nodemon server.js",
     "start": "node server.js"
   },

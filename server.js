@@ -6,14 +6,14 @@ const helmet = require('helmet');
 
 const mongoUri = 'mongodb://boyntoni:buchillon1*@ds015962.mlab.com:15962/made-together-staging';
 const env = process.env.NODE_ENV || 'dev';
-const registration = require('./routes/registration')
+const { registration, login } = require('./routes')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
-app.use('/api', [registration]);
+app.use('/api', [registration, login]);
 
-const server = app.listen(process.env.PORT || 8081, () => console.log(`Server listening at port ${server.address().port}.`));
+const server = app.listen(process.env.PORT || 3000, () => console.log(`Server listening at port ${server.address().port}.`));
 
 mongoose.connect(mongoUri, (err) => { if (err) { throw err; } });
 const db = mongoose.connection;

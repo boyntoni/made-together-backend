@@ -1,5 +1,6 @@
-const { ExtractJwt } = require('passport-jwt'), JwtStrategy = require('passport-jwt').Strategy;
-const { Account } = require('../db/schema');
+const { ExtractJwt } = require('passport-jwt')
+const JwtStrategy = require('passport-jwt').Strategy;
+const { Account } = require('../schema');
 
 const findAccount = (query, callback) => {
     process.nextTick(() =>
@@ -16,7 +17,7 @@ const findAccount = (query, callback) => {
 
 const jwtConfig = {
     jwtFromRequest: ExtractJwt.fromBodyField('token'),
-    secret: 'asdfmasdklgmasdamalkfmadas'
+    secretOrKey: 'asdfmasdklgmasdamalkfmadas'
 }
 
 const jwtAuth = new JwtStrategy(jwtConfig, function(payload, done) {
