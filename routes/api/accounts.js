@@ -33,20 +33,25 @@ router.put('/account', auth.required, function(req, res, next){
   }).catch(next);
 });
 
-router.post('/accounts/login', function(req, res, next){
-  if(!req.body.account.username){
+router.post('/accounts/login',
+  passport.authenticate('local', { })
+
+
+
+function(req, res, next){
+  if(!req.body.username){
     return res.status(422).json({errors: {username: "Username cannot be blank"}});
   }
 
-  if(!req.body.account.password){
+  if(!req.body.password){
     return res.status(422).json({errors: {password: "Password cannott be blank"}});
   }
 
-  passport.authenticate('local', {session: false}, function(err, account, info){
+  passport.authenticate('local', function(err, account, info){
     if(err){ return next(err); }
 
     if(account){
-      account.token = account.generateJWT();
+      account.Bearer = account.generateJWT();
       return res.json({account: account.toAuthJSON()});
     } else {
       return res.status(422).json(info);
