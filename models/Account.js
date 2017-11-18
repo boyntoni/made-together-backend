@@ -8,31 +8,35 @@ const AccountSchema = new mongoose.Schema({
   username: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true},
   image: String,
   restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }],
-  hash: String
+  password: String
 }, {timestamps: true});
 
 AccountSchema.plugin(uniqueValidator, {message: 'is already taken.'});
+AccountSchema.plugin(require('mongoose-bcrypt'));
 
-AccountSchema.methods.validPassword = function(password) {
-    bcrypt.compare(password, hash, function(err, res) {
-    if(res) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-};
+AccountSchema.pre('save', function(next){
+  var user = this;
+  if(user.isModified('password')){
+    bcrypt.hash(user.password, null, null, function(err, hash){
+      if (err){
+        next();
+      }
+      user.password = hash;
+      next();
+    });
+  }
+  next();
+});
 
-AccountSchema.methods.setPassword = function(password){
-  bcrypt.hash(password, 10, function(err, hash) {
-    if (err) return err;
-    return this.hash = hash;
+AccountSchema.methods.validPassword = function(attemptedPassword, callback) {
+  bcrypt.compare(attemptedPassword, this.password, function(err, isMatch) {
+    callback(isMatch);
   });
 };
 
 AccountSchema.methods.generateJWT = function() {
-  var today = new Date();
-  var exp = new Date(today);
+  let today = new Date();
+  let exp = new Date(today);
   exp.setDate(today.getDate() + 60);
 
   return jwt.sign({

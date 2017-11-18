@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-var router = require('express').Router();
-var passport = require('passport');
-var Account = mongoose.model('Account');
-var auth = require('../auth');
+const mongoose = require('mongoose');
+const router = require('express').Router();
+const passport = require('passport');
+const Account = mongoose.model('Account');
+const auth = require('../auth');
 
 router.get('/account', auth.required, function(req, res, next){
   Account.findById(req.payload.id).then(function(account){
@@ -33,34 +33,28 @@ router.put('/account', auth.required, function(req, res, next){
   }).catch(next);
 });
 
-router.post('/accounts/login',
-  passport.authenticate('local', { })
-
-
-
-function(req, res, next){
-  if(!req.body.username){
-    return res.status(422).json({errors: {username: "Username cannot be blank"}});
-  }
-
-  if(!req.body.password){
-    return res.status(422).json({errors: {password: "Password cannott be blank"}});
-  }
-
-  passport.authenticate('local', function(err, account, info){
-    if(err){ return next(err); }
-
-    if(account){
-      account.Bearer = account.generateJWT();
-      return res.json({account: account.toAuthJSON()});
-    } else {
-      return res.status(422).json(info);
+router.post('/accounts/login', function(req, res, next) {
+    if(!req.body.username){
+      return res.status(422).json({errors: {username: "Username cannot be blank"}});
     }
-  })(req, res, next);
+
+    if(!req.body.password){
+      return res.status(422).json({errors: {password: "Password cannot be blank"}});
+    }
+  
+    passport.authenticate('local', {session: false}, function(err, account, info){
+      if (err) { return next(err); }
+      if (account){
+        account.token = account.generateJWT();
+        return res.json({account: account.toAuthJSON()});
+      } else {
+        return res.status(422).json(info);
+      }
+    })(req, res, next);
 });
 
 router.post('/accounts', function(req, res, next){
-  var account = new Account();
+  let account = new Account();
 
   account.username = req.body.username;
   account.setPassword(req.body.password);
