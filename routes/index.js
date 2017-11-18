@@ -1,7 +1,5 @@
-const registration = require('./registration');
-const login = require('./login');
+var router = require('express').Router();
 
-module.exports = {
-  registration,
-  login
-};
+router.use('/api', require('./api'));
+
+module.exports = router;

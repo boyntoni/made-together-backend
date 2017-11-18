@@ -3,19 +3,59 @@ const app            = express();
 const mongoose 		= require('mongoose');
 const bodyParser 	= require('body-parser');
 const helmet = require('helmet');
+const http = require('http');
+const path = require('path');
+const methods = require('methods');
+const session = require('express-session');
+const passport = require('passport');
+const errorhandler = require('errorhandler');
 
-const mongoUri = 'mongodb://boyntoni:buchillon1*@ds015962.mlab.com:15962/made-together-staging';
-const env = process.env.NODE_ENV || 'dev';
-const { registration, login } = require('./routes')
+const isProduction = process.env.NODE_ENV === 'production'
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(require('method-override')());
+app.use(express.static(__dirname + '/public'));
+app.use(session({ secret: 'conduit', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
 app.use(helmet());
-app.use('/api', [registration, login]);
+
+if (!isProduction) {
+  app.use(errorhandler());
+}
+
+if(isProduction){
+  mongoose.connect(process.env.MONGODB_URI);
+} else {
+  mongoose.connect('mongodb://boyntoni:buchillon1*@ds015962.mlab.com:15962/made-together-staging');
+  mongoose.set('debug', true);
+}
+
+require('./models/Account');
+require('./config/passport');
+
+app.use(require('./routes'));
+
+if (!isProduction) {
+  app.use(function(err, req, res, next) {
+    console.log(err.stack);
+
+    res.status(err.status || 500);
+
+    res.json({'errors': {
+      message: err.message,
+      error: err
+    }});
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.json({'errors': {
+    message: err.message,
+    error: {}
+  }});
+});
 
 const server = app.listen(process.env.PORT || 3000, () => console.log(`Server listening at port ${server.address().port}.`));
-
-mongoose.connect(mongoUri, (err) => { if (err) { throw err; } });
-const db = mongoose.connection;
-db.on('error', console.log.bind(console, 'connection error:'));
-db.once('open', () => console.log('DB is now connected.'));
