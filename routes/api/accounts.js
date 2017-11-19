@@ -41,7 +41,7 @@ router.post('/accounts/login', function(req, res, next) {
     if(!req.body.password){
       return res.status(422).json({errors: {password: "Password cannot be blank"}});
     }
-  
+
     passport.authenticate('local', {session: false}, function(err, account, info){
       if (err) { return next(err); }
       if (account){

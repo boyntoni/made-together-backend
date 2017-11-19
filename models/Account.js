@@ -5,33 +5,43 @@ const jwt = require('jsonwebtoken');
 const secret = require('../config').secret;
 
 const AccountSchema = new mongoose.Schema({
-  username: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true},
-  image: String,
-  restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }],
-  password: String
+  username: {
+    type: String,
+    lowercase: true,
+    unique: true,
+    required: [true, "Username cannot be blank"],
+    index: true
+  },
+  groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+  password: {
+    type: String,
+    required: true,
+    minlength: 6
+  }
 }, {timestamps: true});
 
-AccountSchema.plugin(uniqueValidator, {message: 'is already taken.'});
+AccountSchema.plugin(uniqueValidator, {message: 'Username has already been taken.'});
 AccountSchema.plugin(require('mongoose-bcrypt'));
 
 AccountSchema.pre('save', function(next){
-  var user = this;
-  if(user.isModified('password')){
-    bcrypt.hash(user.password, null, null, function(err, hash){
-      if (err){
-        next();
-      }
-      user.password = hash;
-      next();
-    });
+  if(!this.isModified('password')) {
+    return next();
   }
-  next();
+  try {
+    const hash = brypt.hash(this.password, 16.5);
+    this.password = hash;
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
-AccountSchema.methods.validPassword = function(attemptedPassword, callback) {
-  bcrypt.compare(attemptedPassword, this.password, function(err, isMatch) {
-    callback(isMatch);
-  });
+AccountSchema.methods.validPassword = function(attemptedPassword) {
+  try {
+    return bcrypt.compare(attemptedPassword, this.password);
+  } catch (err) {
+    throw err;
+  }
 };
 
 AccountSchema.methods.generateJWT = function() {
@@ -54,35 +64,17 @@ AccountSchema.methods.toAuthJSON = function(){
   };
 };
 
-AccountSchema.methods.toProfileJSONFor = function(user){
-  return {
-    username: this.username,
-    image: this.image || 'https://static.productionready.io/images/smiley-cyrus.jpg',
-  };
-};
-
-AccountSchema.methods.addRestaurant = function(id){
-  if(this.restaurants.indexOf(id) === -1){
-    this.restaurants.push(id);
+AccountSchema.methods.addGroups = function(id){
+  if(this.groups.indexOf(id) === -1){
+    this.groups.push(id);
   }
 
   return this.save();
 };
 
-AccountSchema.methods.removeRestaurant = function(id){
-  this.restaurants.remove(id);
+AccountSchema.methods.removeGroup = function(id){
+  this.groups.remove(id);
   return this.save();
-};
-
-AccountSchema.methods.hasBeenAdded = function(object, id){
-  switch (object) {
-    case 'restaurant':
-      return this.restaurants.some(function(restaurantId){
-        return restaurantId.toString() === id.toString();
-      });
-    default:
-      return true;
-  }
 };
 
 
