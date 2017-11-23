@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 router.use('/', require('./accounts'));
+router.use('/groups', require('./groups'));
 
 router.use(function(err, req, res, next){
   if(err.name === 'ValidationError'){
