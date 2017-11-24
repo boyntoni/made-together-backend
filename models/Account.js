@@ -13,10 +13,11 @@ const AccountSchema = new mongoose.Schema({
     index: true
   },
   groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+  image: String,
   password: {
     type: String,
     required: true,
-    minlength: 6
+    minlength: 3
   }
 }, {timestamps: true});
 
@@ -28,7 +29,7 @@ AccountSchema.pre('save', function(next){
     return next();
   }
   try {
-    const hash = brypt.hash(this.password, 16.5);
+    const hash = bcrypt.hash(this.password, 16.5);
     this.password = hash;
     next();
   } catch (err) {
@@ -58,13 +59,15 @@ AccountSchema.methods.generateJWT = function() {
 
 AccountSchema.methods.toAuthJSON = function(){
   return {
+    id: this._id,
     username: this.username,
     token: this.generateJWT(),
-    image: this.image
+    image: this.image,
+    groups: this.groups
   };
 };
 
-AccountSchema.methods.addGroups = function(id){
+AccountSchema.methods.addGroup = function(id){
   if(this.groups.indexOf(id) === -1){
     this.groups.push(id);
   }

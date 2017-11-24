@@ -6,6 +6,7 @@ const GroupSchema = new mongoose.Schema({
     required: [true, "Username cannot be blank"],
     index: true
   },
+  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' }
   restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }],
   image: {
     type: String,
@@ -14,36 +15,14 @@ const GroupSchema = new mongoose.Schema({
 }, {timestamps: true});
 
 
-GroupSchema.methods.toAuthJSON = function(){
+GroupSchema.methods.toJSONFor = function(account){
   return {
+    id: this._id,
     name: this.name,
+    image: this.image,
     restaurants: this.restaurants,
-    image: this.image
+    createdAt: this.createdAt
   };
-};
-
-GroupSchema.methods.addRestaurant = function(id){
-  if(this.restaurants.indexOf(id) === -1){
-    this.restaurants.push(id);
-  }
-
-  return this.save();
-};
-
-GroupSchema.methods.removeRestaurant = function(id){
-  this.restaurants.remove(id);
-  return this.save();
-};
-
-GroupSchema.methods.hasBeenAdded = function(object, id){
-  switch (object) {
-    case 'restaurant':
-      return this.restaurants.some(function(restaurantId){
-        return restaurantId.toString() === id.toString();
-      });
-    default:
-      return true;
-  }
 };
 
 
