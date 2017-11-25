@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Account = mongoose.model('Account');
+const Account = require('./Account');
 
 const GroupSchema = new mongoose.Schema({
   name: {
@@ -49,4 +49,4 @@ GroupSchema.methods.addMember = function(id){
 };
 
 
-mongoose.model('Group', GroupSchema);
+module.exports = mongoose.model('Group', GroupSchema);

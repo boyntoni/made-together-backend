@@ -100,4 +100,4 @@ AccountSchema.methods.removeGroupInvitation = function(id){
 };
 
 
-mongoose.model('Account', AccountSchema);
+module.exports = mongoose.model('Account', AccountSchema);
