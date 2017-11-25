@@ -5,14 +5,19 @@ const jwt = require('jsonwebtoken');
 const secret = require('../config').secret;
 
 const AccountSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: [true, "E-mail cannot be blank"],
+    index: true
+  },
   username: {
     type: String,
     lowercase: true,
-    unique: true,
     required: [true, "Username cannot be blank"],
     index: true
   },
   groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+  groupInvitations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
   image: String,
   password: {
     type: String,
@@ -21,7 +26,6 @@ const AccountSchema = new mongoose.Schema({
   }
 }, {timestamps: true});
 
-AccountSchema.plugin(uniqueValidator, {message: 'Username has already been taken.'});
 AccountSchema.plugin(require('mongoose-bcrypt'));
 
 AccountSchema.pre('save', function(next){
@@ -61,9 +65,11 @@ AccountSchema.methods.toAuthJSON = function(){
   return {
     id: this._id,
     username: this.username,
+    email: this.email,
     token: this.generateJWT(),
     image: this.image,
-    groups: this.groups
+    groups: this.groups,
+    groupInvitations: this.groupInvitations
   };
 };
 
@@ -77,6 +83,19 @@ AccountSchema.methods.addGroup = function(id){
 
 AccountSchema.methods.removeGroup = function(id){
   this.groups.remove(id);
+  return this.save();
+};
+
+AccountSchema.methods.addGroupInvitation = function(id){
+  if(this.groupInvitations.indexOf(id) === -1){
+    this.groupInvitations.push(id);
+  }
+
+  return this.save();
+};
+
+AccountSchema.methods.removeGroupInvitation = function(id){
+  this.groupInvitations.remove(id);
   return this.save();
 };
 

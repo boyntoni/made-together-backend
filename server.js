@@ -9,13 +9,14 @@ const methods = require('methods');
 const session = require('express-session');
 const passport = require('passport');
 const errorhandler = require('errorhandler');
+const methodOverride = require('method-override');
 
 const isProduction = process.env.NODE_ENV === 'production'
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(require('method-override')());
-app.use(express.static(__dirname + '/public'));
+
+app.use(methodOverride());
 app.use(session({ secret: 'conduit', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
 app.use(helmet());
 
@@ -30,6 +31,7 @@ if(isProduction){
   mongoose.set('debug', true);
 }
 
+require('./models/Group');
 require('./models/Account');
 require('./config/passport');
 
@@ -48,14 +50,16 @@ if (!isProduction) {
   });
 }
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.json({'errors': {
-    message: err.message,
-    error: {}
-  }});
-});
+if (isProduction) {
+  // production error handler
+  // no stacktraces leaked to user
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.json({'errors': {
+      message: err.message,
+      error: {}
+    }});
+  });
+}
 
 const server = app.listen(process.env.PORT || 3000, () => console.log(`Server listening at port ${server.address().port}.`));

@@ -29,6 +29,7 @@ router.post('/accounts', function(req, res, next){
 
   account.username = req.body.username;
   account.password = req.body.password;
+  account.email = req.body.email;
 
   account.save().then(function(){
     let responseData = account.toAuthJSON();
@@ -67,6 +68,18 @@ router.put('/account', auth.required, function(req, res, next){
       return res.json({account: account.toAuthJSON()});
     });
   }).catch(next);
+});
+
+router.get('/accounts/:email/search', auth.required, function(req, res,next){
+  Account.findById(req.payload.id).then(function(account){
+    if (!account) { return res.sendStatus(401); }
+    let accountEmail = req.params.email;
+    Account.findOne( { 'email': accountEmail }, 'username', function (err, searchAccount) {
+      if (err) return handlerError(err);
+      if (!searchAccount) { return res.sendStatus(401); }
+      return res.json({username: searchAccount.username, id: searchAccount.id});
+    });
+  });
 });
 
 module.exports = router;

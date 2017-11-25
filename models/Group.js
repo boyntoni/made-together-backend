@@ -6,16 +6,16 @@ const GroupSchema = new mongoose.Schema({
     required: [true, "Username cannot be blank"],
     index: true
   },
-  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' }
-  restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }],
-  image: {
+  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
+  members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],
+    image: {
     type: String,
     default: 'https://static.productionready.io/images/smiley-cyrus.jpg'
   }
 }, {timestamps: true});
 
 
-GroupSchema.methods.toJSONFor = function(account){
+GroupSchema.methods.toJSON = () => {
   return {
     id: this._id,
     name: this.name,
@@ -23,6 +23,14 @@ GroupSchema.methods.toJSONFor = function(account){
     restaurants: this.restaurants,
     createdAt: this.createdAt
   };
+};
+
+GroupSchema.methods.addMember = function(id){
+  if(this.members.indexOf(id) === -1){
+    this.members.push(id);
+  }
+
+  return this.save();
 };
 
 

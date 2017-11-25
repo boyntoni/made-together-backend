@@ -5,11 +5,11 @@ const Account = mongoose.model('Account');
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-  Account.findOne({username: username}).then(function(account){
-    if(!account || !account.validPassword(password)){
-      return done(null, false, {errors: {'email or password': 'is invalid'}});
-    }
-
-    return done(null, account);
-  }).catch(done);
-}));
+    Account.findOne({ username: username }, function (err, account) {
+      if (err) { return done(err); }
+      if (!account) { return done(null, false); }
+      if (!account.verifyPassword(password)) { return done(null, false); }
+      return done(null, account);
+    });
+  }
+));
