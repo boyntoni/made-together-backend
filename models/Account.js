@@ -66,8 +66,8 @@ AccountSchema.methods.toAuthJSON = function(){
     id: this._id,
     username: this.username,
     email: this.email,
-    token: this.generateJWT(),
     image: this.image,
+    token: this.generateJWT(),
     groups: this.groups,
     groupInvitations: this.groupInvitations
   };

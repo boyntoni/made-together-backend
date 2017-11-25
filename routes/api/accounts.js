@@ -41,11 +41,10 @@ router.post('/accounts', function(req, res, next){
   account.email = req.body.email;
 
   account.save().then(function(){
-    let responseData = account.toAuthJSON();
-    if (responseData.account) {
-      return res.json({account: responseData});
+    if (account) {
+      return res.json({account: account.toAuthJSON()});
     } else {
-      return res.status(400).json(responseData)
+      return res.status(400)
     }
   }).catch(next);
 });
