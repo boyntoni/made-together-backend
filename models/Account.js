@@ -68,10 +68,18 @@ AccountSchema.methods.toAuthJSON = function(){
     email: this.email,
     token: this.generateJWT(),
     image: this.image,
-    groups: this.groups,
-    groupInvitations: this.groupInvitations
+    groups: this.populateGroups(),
+    groupInvitations: this.populateGroupInvitations()
   };
 };
+
+AccountSchema.methods.populateGroups = function() {
+  return this.populate('groups', '_id name');
+}
+
+AccountSchema.methods.populateGroupInvitations = function() {
+  return this.populate('groupInvitations', '_id name');
+}
 
 AccountSchema.methods.addGroup = function(id){
   if(this.groups.indexOf(id) === -1){

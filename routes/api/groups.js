@@ -12,17 +12,7 @@ router.post('/accounts/create-group', auth.required, function(req, res, next) {
       group.name = req.body.groupName;
       group.image = req.body.groupImage;
       let groupMembers = req.body.groupMembers;
-
-      if (groupMembers && groupMembers.length) {
-        groupMembers.forEach((addedAccount) => {
-          Account.findById(addedAccount.id).then(function(account) {
-            if (!account) { return res.sendStatus(401); }
-            account.addGroupInvitation(group.id);
-          })
-        });
-      }
       group.admin = account;
-      account.addGroup(group._id);
       return group.save().then(function(){
         return res.json({group: group.toJSON()});
       });

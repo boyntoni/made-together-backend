@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const GroupSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Username cannot be blank"],
+    required: [true, "Group name cannot be blank"],
     index: true
   },
   admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
@@ -11,11 +11,12 @@ const GroupSchema = new mongoose.Schema({
     image: {
     type: String,
     default: 'https://static.productionready.io/images/smiley-cyrus.jpg'
-  }
+  },
+  // restaurants: [{ { type: mongoose.Schema.Types.ObjectId, ref: 'Account' } }]
 }, {timestamps: true});
 
 
-GroupSchema.methods.toJSON = () => {
+GroupSchema.methods.toJSON = function(){
   return {
     id: this._id,
     name: this.name,
@@ -24,6 +25,18 @@ GroupSchema.methods.toJSON = () => {
     createdAt: this.createdAt
   };
 };
+
+GroupSchema.pre('save', function(next){
+  if (this.groupMembers && this.groupMembers.length) {
+    this.groupMembers.forEach((addedAccount) => {
+      Account.findById(addedAccount.id).then(function(account) {
+        if (!account) { return res.sendStatus(401); }
+        account.addGroupInvitation(group.id);
+      });
+    });
+  }
+});
+
 
 GroupSchema.methods.addMember = function(id){
   if(this.members.indexOf(id) === -1){
