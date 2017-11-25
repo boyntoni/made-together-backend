@@ -28,11 +28,12 @@ GroupSchema.methods.toJSON = function(){
 };
 
 GroupSchema.pre('save', function(next){
+  const self = this;
   if (this.groupMembers && this.groupMembers.length) {
     this.groupMembers.forEach((addedAccount) => {
       Account.findById(addedAccount.id).then(function(account) {
         if (!account) { return res.sendStatus(401); }
-        account.addGroupInvitation(group._id);
+        account.addGroupInvitation(self.id);
       });
     });
   }
