@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Account = mongoose.model('Account');
 
 const GroupSchema = new mongoose.Schema({
   name: {
@@ -8,7 +9,7 @@ const GroupSchema = new mongoose.Schema({
   },
   admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],
-    image: {
+  image: {
     type: String,
     default: 'https://static.productionready.io/images/smiley-cyrus.jpg'
   },
@@ -31,10 +32,11 @@ GroupSchema.pre('save', function(next){
     this.groupMembers.forEach((addedAccount) => {
       Account.findById(addedAccount.id).then(function(account) {
         if (!account) { return res.sendStatus(401); }
-        account.addGroupInvitation(group.id);
+        account.addGroupInvitation(group._id);
       });
     });
   }
+  next()
 });
 
 

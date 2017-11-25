@@ -15,9 +15,18 @@ router.post('/accounts/login', function(req, res, next) {
 
     passport.authenticate('local', {session: false}, function(err, account, info){
       if (err) { return next(err); }
+      let accountGroups;
+      let accountGroupInvitations;
       if (account){
-        account.token = account.generateJWT();
-        return res.json({account: account.toAuthJSON()});
+        let populateOpts = [
+          { path: 'groups' , model: 'Group'},
+          { path: 'groupInvitations', select: '_id name', model: 'Group'}
+        ]
+        Account.populate(account, populateOpts, function(err, populatedAccount) {
+          if (err) { return next(err); }
+          token = populatedAccount.generateJWT();
+          return res.json({account: populatedAccount, token: token});
+        });
       } else {
         return res.status(422).json(info);
       }

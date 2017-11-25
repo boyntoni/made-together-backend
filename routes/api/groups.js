@@ -11,9 +11,11 @@ router.post('/accounts/create-group', auth.required, function(req, res, next) {
       let group = new Group();
       group.name = req.body.groupName;
       group.image = req.body.groupImage;
-      let groupMembers = req.body.groupMembers;
       group.admin = account;
+      group.addMember(account._id);
+      group.groupMembers = req.body.groupMembers;
       return group.save().then(function(){
+        account.addGroup(group._id);
         return res.json({group: group.toJSON()});
       });
     }).catch(next);
