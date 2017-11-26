@@ -22,7 +22,8 @@ GroupSchema.methods.toJSON = function(){
     id: this._id,
     name: this.name,
     image: this.image,
-    restaurants: this.restaurants,
+    admin: this.admin,
+    // restaurants: this.restaurants,
     createdAt: this.createdAt
   };
 };
