@@ -18,15 +18,7 @@ router.post('/accounts/login', function(req, res, next) {
       let accountGroups;
       let accountGroupInvitations;
       if (account){
-        let populateOpts = [
-          { path: 'groups' , model: 'Group'},
-          { path: 'groupInvitations', select: '_id name', model: 'Group'}
-        ]
-        Account.populate(account, populateOpts, function(err, populatedAccount) {
-          if (err) { return next(err); }
-          token = populatedAccount.generateJWT();
-          return res.json({account: populatedAccount, token: token});
-        });
+        return account.fullProfile(res)
       } else {
         return res.status(422).json(info);
       }
@@ -60,7 +52,6 @@ router.get('/account', auth.required, function(req, res, next){
 router.put('/account', auth.required, function(req, res, next){
   Account.findById(req.payload.id).then(function(account){
     if(!account){ return res.sendStatus(401); }
-
     // only update fields that were actually passed...
     if(typeof req.body.account.username !== 'undefined'){
       account.username = req.body.account.username;

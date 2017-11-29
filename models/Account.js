@@ -61,6 +61,19 @@ AccountSchema.methods.generateJWT = function() {
   }, secret);
 };
 
+AccountSchema.methods.fullProfile = function(res) {
+  var self = this;
+  let populateOpts = [
+    { path: 'groups' , model: 'Group'},
+    { path: 'groupInvitations', select: '_id name', model: 'Group',
+      populate: { path: 'admin', select: 'username', model: 'Account'}}        ]
+  this.constructor.populate(this, populateOpts, function(err, populatedAccount) {
+    if (err) { return next(err); }
+    let token = self.generateJWT();
+    return res.json({account: populatedAccount, token: token});
+  });
+};
+
 AccountSchema.methods.toAuthJSON = function(){
   return {
     id: this._id,
@@ -75,28 +88,24 @@ AccountSchema.methods.toAuthJSON = function(){
 
 AccountSchema.methods.addGroup = function(id){
   if(this.groups.indexOf(id) === -1){
-    this.groups.push(id);
+    return this.groups.push(id);
   }
-
-  return this.save();
+  return;
 };
 
 AccountSchema.methods.removeGroup = function(id){
-  this.groups.remove(id);
-  return this.save();
+  return this.groups.remove(id);
 };
 
 AccountSchema.methods.addGroupInvitation = function(id){
   if(this.groupInvitations.indexOf(id) === -1){
-    this.groupInvitations.push(id);
+    return this.groupInvitations.push(id);
   }
-
-  return this.save();
+  return;
 };
 
 AccountSchema.methods.removeGroupInvitation = function(id){
-  this.groupInvitations.remove(id);
-  return this.save();
+  return this.groupInvitations.remove(id);
 };
 
 

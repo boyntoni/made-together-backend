@@ -28,26 +28,27 @@ GroupSchema.methods.toJSON = function(){
   };
 };
 
-GroupSchema.pre('save', function(next){
-  const self = this;
-  if (this.groupMembers && this.groupMembers.length) {
-    this.groupMembers.forEach((addedAccount) => {
+GroupSchema.methods.addGroupInvitations = function(groupMembers){
+  if (groupMembers && groupMembers.length) {
+    groupMembers.forEach((addedAccount) => {
       Account.findById(addedAccount.id).then(function(account) {
         if (!account) { return res.sendStatus(401); }
-        account.addGroupInvitation(self.id);
+        account.addGroupInvitation(this.id);
       });
     });
   }
-  next()
-});
-
+  return;
+}
 
 GroupSchema.methods.addMember = function(id){
   if(this.members.indexOf(id) === -1){
-    this.members.push(id);
+    return this.members.push(id);
   }
+  return;
+};
 
-  return this.save();
+GroupSchema.methods.removeMember = function(id){
+  return this.members.remove(id);
 };
 
 
