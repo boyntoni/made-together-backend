@@ -61,29 +61,16 @@ AccountSchema.methods.generateJWT = function() {
   }, secret);
 };
 
-AccountSchema.methods.fullProfile = function(res) {
-  var self = this;
+AccountSchema.methods.fullProfile = function(account, res) {
   let populateOpts = [
     { path: 'groups' , model: 'Group'},
     { path: 'groupInvitations', select: '_id name', model: 'Group',
       populate: { path: 'admin', select: 'username', model: 'Account'}}        ]
   this.constructor.populate(this, populateOpts, function(err, populatedAccount) {
     if (err) { return next(err); }
-    let token = self.generateJWT();
+    let token = account.generateJWT();
     return res.json({account: populatedAccount, token: token});
   });
-};
-
-AccountSchema.methods.toAuthJSON = function(){
-  return {
-    id: this._id,
-    username: this.username,
-    email: this.email,
-    image: this.image,
-    token: this.generateJWT(),
-    groups: this.groups,
-    groupInvitations: this.groupInvitations
-  };
 };
 
 AccountSchema.methods.addGroup = function(id){
@@ -99,9 +86,10 @@ AccountSchema.methods.removeGroup = function(id){
 
 AccountSchema.methods.addGroupInvitation = function(id){
   if(this.groupInvitations.indexOf(id) === -1){
-    return this.groupInvitations.push(id);
+    console.log(this.username + " is being added as invite of " + id)
+    this.groupInvitations.push(id);
   }
-  return;
+  return this.save();
 };
 
 AccountSchema.methods.removeGroupInvitation = function(id){

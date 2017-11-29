@@ -18,7 +18,7 @@ router.post('/accounts/login', function(req, res, next) {
       let accountGroups;
       let accountGroupInvitations;
       if (account){
-        return account.fullProfile(res)
+        return account.fullProfile(account, res)
       } else {
         return res.status(422).json(info);
       }
@@ -34,7 +34,7 @@ router.post('/accounts', function(req, res, next){
 
   account.save().then(function(){
     if (account) {
-      return res.json({account: account.toAuthJSON()});
+      return account.fullProfile(account, res)
     } else {
       return res.status(400)
     }

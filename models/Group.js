@@ -29,11 +29,12 @@ GroupSchema.methods.toJSON = function(){
 };
 
 GroupSchema.methods.addGroupInvitations = function(groupMembers){
+  var self = this;
   if (groupMembers && groupMembers.length) {
     groupMembers.forEach((addedAccount) => {
       Account.findById(addedAccount.id).then(function(account) {
         if (!account) { return res.sendStatus(401); }
-        account.addGroupInvitation(this.id);
+        account.addGroupInvitation(self.id);
       });
     });
   }

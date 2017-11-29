@@ -13,11 +13,11 @@ router.post('/accounts/create-group', auth.required, function(req, res, next) {
       group.image = req.body.groupImage;
       group.admin = account;
       group.addMember(account._id);
-      group.addGroupInvitations(req.body.groupMembers);
       return group.save().then(function(){
+        group.addGroupInvitations(req.body.groupMembers);
         account.addGroup(group._id);
         account.save().then(function(){
-          return account.fullProfile(res);
+          return account.fullProfile(account, res);
         }).catch(next)
       });
     }).catch(next);
@@ -27,13 +27,14 @@ router.post('/accounts/create-group', auth.required, function(req, res, next) {
 router.post('/accounts/group-invitations/accept/:groupId', auth.required, function(req, res, next) {
     Account.findById(req.payload.id).then(function(account) {
       if (!account) { return res.sendStatus(401); }
+      const groupId = req.params.groupId;
       account.removeGroupInvitation(groupId);
       account.addGroup(groupId);
       account.save().then(function() {
         Group.findById(groupId).then(function(group) {
           group.addMember(account._id);
           group.save().then(function() {
-            return account.fullProfile(res);
+            return account.fullProfile(account, res);
           }).catch(next);
         });
       }).catch(next);
@@ -44,6 +45,7 @@ router.post('/accounts/group-invitations/accept/:groupId', auth.required, functi
 router.post('/accounts/group-invitations/reject/:groupId', auth.required, function(req, res, next) {
     Account.findById(req.payload.id).then(function(account) {
       if (!account) { return res.sendStatus(401); }
+      const groupId = req.params.groupId;
       account.removeGroupInvitation(groupId);
       return account.save().then(function() {
         return account.fullProfile(res);
