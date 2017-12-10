@@ -25,6 +25,7 @@
     "mongoose": "^4.12.2",
     "mongoose-bcrypt": "^1.5.0",
     "mongoose-unique-validator": "^1.0.6",
+    "node-fetch": "^1.7.3",
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.0",
     "passport-local": "^1.0.0"
