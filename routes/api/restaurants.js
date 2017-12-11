@@ -20,6 +20,7 @@ router.post('/restaurants/search', auth.required, function(req, res, next) {
     let params = {
       ll: searchGeo,
       query: searchQuery,
+      limit: 15,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET
     };
