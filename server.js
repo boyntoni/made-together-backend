@@ -33,10 +33,9 @@ if(isProduction){
 
 require('./models/Group');
 require('./models/Account');
+require('./models/Restaurant');
 require('./config/passport');
 app.use(require('./routes'));
-
-
 
 if (!isProduction) {
   app.use(function(err, req, res, next) {

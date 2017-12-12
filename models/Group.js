@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Account = require('./Account');
+const Restaurant = require('./Restaurant');
 
 const GroupSchema = new mongoose.Schema({
   name: {
@@ -9,6 +10,7 @@ const GroupSchema = new mongoose.Schema({
   },
   admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],
+  restaurants: [{ type: mognoose.Schema.Types.ObjectId, ref: 'Restaurant' }]
   image: {
     type: String,
     default: 'https://static.productionready.io/images/smiley-cyrus.jpg'
@@ -50,6 +52,17 @@ GroupSchema.methods.addMember = function(id){
 
 GroupSchema.methods.removeMember = function(id){
   return this.members.remove(id);
+};
+
+GroupSchema.methods.addRestaurant = function(id){
+  if(this.restaurants.indexOf(id) === -1){
+    return this.restaurants.push(id);
+  }
+  return;
+};
+
+GroupSchema.methods.removeRestaurant = function(id){
+  return this.restaurants.remove(id);
 };
 
 

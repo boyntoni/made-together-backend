@@ -63,7 +63,8 @@ AccountSchema.methods.generateJWT = function() {
 
 AccountSchema.methods.fullProfile = function(account, res) {
   let populateOpts = [
-    { path: 'groups' , model: 'Group'},
+    { path: 'groups' , model: 'Group',
+      populate: { path: 'restaurants', model: 'Restaurant'}},
     { path: 'groupInvitations', select: '_id name', model: 'Group',
       populate: { path: 'admin', select: 'username', model: 'Account'}}        ]
   this.constructor.populate(this, populateOpts, function(err, populatedAccount) {
@@ -86,7 +87,6 @@ AccountSchema.methods.removeGroup = function(id){
 
 AccountSchema.methods.addGroupInvitation = function(id){
   if(this.groupInvitations.indexOf(id) === -1){
-    console.log(this.username + " is being added as invite of " + id)
     this.groupInvitations.push(id);
   }
   return this.save();
