@@ -87,11 +87,11 @@ router.post('/restaurants/add', auth.required, function(req, res, next){
       restaurant.save().then(function() {
         if (restaurant) {
           group.addRestaurant(restaurant.id);
-          return account.fullProfile(account, res)
+          return group.fullDetail(group, res)
         }
       }).catch(next);
     });
-  }
+  });
 });
 
 module.exports = router;

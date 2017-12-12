@@ -53,5 +53,16 @@ router.post('/accounts/group-invitations/reject/:groupId', auth.required, functi
     }).catch(next);
 });
 
+router.get('/groups/:groupId', auth.required, function (req, res, next) {
+  Account.findById(req.payload.id).then(function (account) {
+    if (!account) { return res.sendStatus(401); }
+    const groupId = req.params.groupId;
+    Group.findById(groupId).then(function(group) {
+      return group.fullDetail(group, res)
+    }).catch(next); 
+  }).catch(next);
+});
+
+
 
 module.exports = router;

@@ -10,7 +10,7 @@ const GroupSchema = new mongoose.Schema({
   },
   admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],
-  restaurants: [{ type: mognoose.Schema.Types.ObjectId, ref: 'Restaurant' }]
+  restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }],
   image: {
     type: String,
     default: 'https://static.productionready.io/images/smiley-cyrus.jpg'
@@ -19,15 +19,14 @@ const GroupSchema = new mongoose.Schema({
 }, {timestamps: true});
 
 
-GroupSchema.methods.toJSON = function(){
-  return {
-    id: this._id,
-    name: this.name,
-    image: this.image,
-    admin: this.admin,
-    // restaurants: this.restaurants,
-    createdAt: this.createdAt
-  };
+GroupSchema.methods.fullDetail = function (group, res) {
+  let populateOpts = [
+      { path: 'restaurants', model: 'Restaurant'}
+  ]
+  this.constructor.populate(this, populateOpts, function (err, populatedGroup) {
+    if (err) { return next(err); }
+    return res.json({ group: populatedGroup });
+  });
 };
 
 GroupSchema.methods.addGroupInvitations = function(groupMembers){
