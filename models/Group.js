@@ -21,6 +21,7 @@ const GroupSchema = new mongoose.Schema({
 
 GroupSchema.methods.fullDetail = function (group, res) {
   let populateOpts = [
+      { path: 'members', select: '_id username', model: 'Account'},
       { path: 'restaurants', model: 'Restaurant'}
   ]
   this.constructor.populate(this, populateOpts, function (err, populatedGroup) {
