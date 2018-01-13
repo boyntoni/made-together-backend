@@ -16,7 +16,7 @@ const AccountSchema = new mongoose.Schema({
     required: [true, "Username cannot be blank"],
     index: true
   },
-  groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+  group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group' },
   groupInvitations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
   image: String,
   password: {
@@ -63,7 +63,7 @@ AccountSchema.methods.generateJWT = function() {
 
 AccountSchema.methods.fullProfile = function(account, res) {
   let populateOpts = [
-    { path: 'groups' , model: 'Group'},
+    { path: 'group' , model: 'Group'},
     { path: 'groupInvitations', select: '_id name', model: 'Group',
       populate: { path: 'admin', select: 'username', model: 'Account'}}        ]
   this.constructor.populate(this, populateOpts, function(err, populatedAccount) {
@@ -74,14 +74,11 @@ AccountSchema.methods.fullProfile = function(account, res) {
 };
 
 AccountSchema.methods.addGroup = function(id){
-  if(this.groups.indexOf(id) === -1){
-    return this.groups.push(id);
-  }
-  return;
+  return this.group = id;
 };
 
 AccountSchema.methods.removeGroup = function(id){
-  return this.groups.remove(id);
+  return this.group = null;
 };
 
 AccountSchema.methods.addGroupInvitation = function(id){

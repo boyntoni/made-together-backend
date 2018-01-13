@@ -34,7 +34,6 @@ router.post('/restaurants/search', auth.required, function(req, res, next) {
       method: 'GET'
     }).then(response => response.json())
     .then((responseJson) => {
-      console.lo
       // if (responseJson.response.groups) { return res.sendStatus(401); }
       // if (!responseJson.response.groups[0].items.length) { return res.sendStatus(401); }
       let restaurants = Restaurant.parseSearch(responseJson.response.groups[0].items);
