@@ -14,8 +14,8 @@ router.post('/accounts/create-group', auth.required, function(req, res, next) {
       group.admin = account;
       group.addMember(account._id);
       return group.save().then(function(){
-        group.addGroupInvitations(req.body.groupMembers);
-        account.addGroup(group._id);
+        group.addGroupInvitations(req.body.groupMember);
+        account.group = group._id;
         account.save().then(function(){
           return account.fullProfile(account, res);
         }).catch(next)
@@ -29,7 +29,7 @@ router.post('/accounts/group-invitations/accept/:groupId', auth.required, functi
       if (!account) { return res.sendStatus(401); }
       const groupId = req.params.groupId;
       account.removeGroupInvitation(groupId);
-      account.addGroup(groupId);
+      account.group = groupId;
       account.save().then(function() {
         Group.findById(groupId).then(function(group) {
           group.addMember(account._id);

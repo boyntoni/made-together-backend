@@ -30,15 +30,14 @@ GroupSchema.methods.fullDetail = function (group, res) {
   });
 };
 
-GroupSchema.methods.addGroupInvitations = function(groupMembers){
+GroupSchema.methods.addGroupInvitations = function(accountId){
   var self = this;
-  if (groupMembers && groupMembers.length) {
-    groupMembers.forEach((addedAccount) => {
-      Account.findById(addedAccount.id).then(function(account) {
+  console.log(accountId)
+  if (accountId) {
+      Account.findById(accountId).then(function(account) {
         if (!account) { return res.sendStatus(401); }
         account.addGroupInvitation(self.id);
       });
-    });
   }
   return;
 }

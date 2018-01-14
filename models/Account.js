@@ -63,21 +63,19 @@ AccountSchema.methods.generateJWT = function() {
 
 AccountSchema.methods.fullProfile = function(account, res) {
   let populateOpts = [
-    { path: 'group' , model: 'Group'},
+    { path: 'groups' , model: 'Group'},
     { path: 'groupInvitations', select: '_id name', model: 'Group',
-      populate: { path: 'admin', select: 'username', model: 'Account'}}        ]
+      populate: { path: 'admin', select: 'username', model: 'Account'}}
+  ]
   this.constructor.populate(this, populateOpts, function(err, populatedAccount) {
     if (err) { return next(err); }
     let token = account.generateJWT();
+    console.log(populatedAccount);
     return res.json({account: populatedAccount, token: token});
   });
 };
 
-AccountSchema.methods.addGroup = function(id){
-  return this.group = id;
-};
-
-AccountSchema.methods.removeGroup = function(id){
+AccountSchema.methods.removeGroup = function(){
   return this.group = null;
 };
 
