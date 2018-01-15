@@ -63,7 +63,7 @@ AccountSchema.methods.generateJWT = function() {
 
 AccountSchema.methods.fullProfile = function(account, res) {
   let populateOpts = [
-    { path: 'groups' , model: 'Group'},
+    { path: 'group' , model: 'Group'},
     { path: 'groupInvitations', select: '_id name', model: 'Group',
       populate: { path: 'admin', select: 'username', model: 'Account'}}
   ]
