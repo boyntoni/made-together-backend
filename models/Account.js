@@ -70,7 +70,6 @@ AccountSchema.methods.fullProfile = function(account, res) {
   this.constructor.populate(this, populateOpts, function(err, populatedAccount) {
     if (err) { return next(err); }
     let token = account.generateJWT();
-    console.log(populatedAccount);
     return res.json({account: populatedAccount, token: token});
   });
 };

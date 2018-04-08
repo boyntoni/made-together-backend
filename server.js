@@ -1,7 +1,7 @@
-const express        = require('express');
-const app            = express();
-const mongoose 		= require('mongoose');
-const bodyParser 	= require('body-parser');
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const http = require('http');
 const path = require('path');
@@ -34,6 +34,9 @@ if(isProduction){
 require('./models/Group');
 require('./models/Account');
 require('./models/Restaurant');
+require('./models/Show');
+require('./models/Movie');
+require('./models/Destination');
 require('./config/passport');
 app.use(require('./routes'));
 

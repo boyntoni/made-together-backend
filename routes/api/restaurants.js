@@ -15,28 +15,28 @@ const CLIENT_SECRET = require('../../config').foursquareClientSecret;
 router.post('/restaurants/search', auth.required, function(req, res, next) {
   Account.findById(req.payload.id).then(function(account){
     if (!account) { return res.sendStatus(401); }
-    let searchQuery = req.body.searchTerm;
-    let searchGeo = `${req.body.latitude},${req.body.longitude}`;
-    let baseUrl = 'https://api.foursquare.com/v2/venues/explore?v=20170801&';
-    let params = {
+    const searchQuery = req.body.searchTerm;
+    const searchGeo = `${req.body.latitude},${req.body.longitude}`;
+    const baseUrl = 'https://api.foursquare.com/v2/venues/explore?v=20170801&';
+    const params = {
       ll: searchGeo,
       query: searchQuery,
       limit: 15,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET
     };
-    let esc = encodeURIComponent;
-    let query = Object.keys(params)
+    const esc = encodeURIComponent;
+    const query = Object.keys(params)
       .map(k => esc(k) + '=' + esc(params[k]))
       .join('&');
-    let url = baseUrl + query
+    const url = baseUrl + query
     fetch((url + query), {
       method: 'GET'
     }).then(response => response.json())
     .then((responseJson) => {
       // if (responseJson.response.groups) { return res.sendStatus(401); }
       // if (!responseJson.response.groups[0].items.length) { return res.sendStatus(401); }
-      let restaurants = Restaurant.parseSearch(responseJson.response.groups[0].items);
+      const restaurants = Restaurant.parseSearch(responseJson.response.groups[0].items);
       return res.json({restaurants: restaurants});
     }).catch((error) => {
       console.log(error);
@@ -45,23 +45,23 @@ router.post('/restaurants/search', auth.required, function(req, res, next) {
 });
 
 router.post('/restaurants/search', auth.required, function(req, res, next) {
-  Account.findById(req.payload.id).then(function(account){
+  Account.findById(req.payload.id).then((account) => {
     if (!account) { return res.sendStatus(401); }
-    let searchQuery = req.body.searchTerm;
-    let searchGeo = `${req.body.latitude},${req.body.longitude}`;
-    let baseUrl = 'https://api.foursquare.com/v2/venues/explore?v=20170801&';
-    let params = {
+    const searchQuery = req.body.searchTerm;
+    const searchGeo = `${req.body.latitude},${req.body.longitude}`;
+    const baseUrl = 'https://api.foursquare.com/v2/venues/explore?v=20170801&';
+    const params = {
       ll: searchGeo,
       query: searchQuery,
       limit: 15,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET
     };
-    let esc = encodeURIComponent;
-    let query = Object.keys(params)
+    const esc = encodeURIComponent;
+    const query = Object.keys(params)
       .map(k => esc(k) + '=' + esc(params[k]))
       .join('&');
-    let url = baseUrl + query
+    const url = baseUrl + query
     fetch((url + query), {
       method: 'GET'
     }).then(response => response.json())
@@ -79,8 +79,8 @@ router.post('/restaurants/search', auth.required, function(req, res, next) {
 router.post('/restaurants/add', auth.required, function(req, res, next){
   Account.findById(req.payload.id).then(function(account) {
     if (!account) { return res.sendStatus(401); }
-    let groupId = req.body.groupId;
-    let restaurant = req.body.restaurant;
+    const groupId = req.body.groupId;
+    const restaurant = req.body.restaurant;
     Group.findById(groupId).then(function(group) {
       if (!group) { return res.sendStatus(401); }
       restaurant.save().then(function() {

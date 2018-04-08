@@ -8,10 +8,11 @@ router.post('/accounts/create-group', auth.required, function(req, res, next) {
     Account.findById(req.payload.id).then(function(account) {
       if (!account) { return res.sendStatus(401); }
 
-      let group = new Group();
-      group.name = req.body.groupName;
-      group.image = req.body.groupImage;
-      group.admin = account;
+      let group = new Group( {
+        name: req.body.groupName,
+        image: req.body.groupImage,
+        admin: account,
+      });
       group.addMember(account._id);
       return group.save().then(function(){
         group.addGroupInvitations(req.body.groupMember);
@@ -34,7 +35,7 @@ router.post('/accounts/group-invitations/accept/:groupId', auth.required, functi
         Group.findById(groupId).then(function(group) {
           group.addMember(account._id);
           group.save().then(function() {
-            return account.fullProfile(account, res);
+            return group.fullDetail(group, res);
           }).catch(next);
         });
       }).catch(next);
@@ -55,8 +56,10 @@ router.post('/accounts/group-invitations/reject/:groupId', auth.required, functi
 
 router.get('/groups/:groupId', auth.required, function (req, res, next) {
   Account.findById(req.payload.id).then(function (account) {
+    console.log("finding group");
     if (!account) { return res.sendStatus(401); }
     const groupId = req.params.groupId;
+    console.log(groupId)
     Group.findById(groupId).then(function(group) {
       return group.fullDetail(group, res)
     }).catch(next); 
