@@ -23,4 +23,20 @@ router.post('/movies/add', auth.required, function (req, res, next) {
     });
 });
 
+router.post('/movies/remove', auth.required, function (req, res, next) {
+    Account.findById(req.payload.id).then(function (account) {
+        if (!account) { return res.sendStatus(401); }
+        const groupId = req.body.groupId;
+        const movieId = req.body.itemId;
+        console.log('groupid :' + groupId);
+        Group.findById(groupId).then(function (group) {
+            if (!group) { return res.sendStatus(401); }
+            console.log('removing movie: ' + movieId);
+            Movie.findByIdAndRemove(movieId).then(() => {
+                return group.fullDetail(group, res);
+            });
+        }).catch(next);
+    });
+});
+
 module.exports = router;
