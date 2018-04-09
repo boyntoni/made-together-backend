@@ -4,7 +4,7 @@ const passport = require('passport');
 const Account = mongoose.model('Account');
 const auth = require('../auth');
 
-router.post('/accounts/login', function(req, res, next) {
+router.post('/accounts/login', (req, res, next)  => {
     if(!req.body.username){
       return res.status(422).json({errors: {username: "Username cannot be blank"}});
     }
@@ -13,7 +13,7 @@ router.post('/accounts/login', function(req, res, next) {
       return res.status(422).json({errors: {password: "Password cannot be blank"}});
     }
 
-    passport.authenticate('local', {session: false}, function(err, account, info){
+    passport.authenticate('local', {session: false}, (err, account, info) => {
       if (err) { return next(err); }
       let accountGroups;
       let accountGroupInvitations;
@@ -25,14 +25,14 @@ router.post('/accounts/login', function(req, res, next) {
     })(req, res, next);
 });
 
-router.post('/accounts', function(req, res, next){
+router.post('/accounts', (req, res, next) => {
   let account = new Account();
 
   account.username = req.body.username;
   account.password = req.body.password;
   account.email = req.body.email;
 
-  account.save().then(function(){
+  account.save().then(() => {
     if (account) {
       return account.fullProfile(account, res)
     } else {
@@ -41,16 +41,16 @@ router.post('/accounts', function(req, res, next){
   }).catch(next);
 });
 
-router.get('/account', auth.required, function(req, res, next){
-  Account.findById(req.payload.id).then(function(account){
+router.get('/account', auth.required, (req, res, next) => {
+  Account.findById(req.payload.id).then((account) => {
     if(!account){ return res.sendStatus(401); }
 
     return res.json({account: account.toAuthJSON()});
   }).catch(next);
 });
 
-router.put('/account', auth.required, function(req, res, next){
-  Account.findById(req.payload.id).then(function(account){
+router.put('/account', auth.required, (req, res, next) => {
+  Account.findById(req.payload.id).then((account) => {
     if(!account){ return res.sendStatus(401); }
     // only update fields that were actually passed...
     if(typeof req.body.account.username !== 'undefined'){
@@ -63,17 +63,17 @@ router.put('/account', auth.required, function(req, res, next){
       // account.setPassword(req.body.account.password);
     }
 
-    return account.save().then(function(){
+    return account.save().then(() => {
       return res.json({account: account.toAuthJSON()});
     });
   }).catch(next);
 });
 
-router.get('/accounts/:email/search', auth.required, function(req, res,next){
-  Account.findById(req.payload.id).then(function(account){
+router.get('/accounts/:email/search', auth.required, (req, res,next) => {
+  Account.findById(req.payload.id).then((account) => {
     if (!account) { return res.sendStatus(401); }
     let accountEmail = req.params.email;
-    Account.findOne( { 'email': accountEmail }, 'username', function (err, searchAccount) {
+    Account.findOne( { 'email': accountEmail }, 'username', (err, searchAccount)  => {
       if (err) return handlerError(err);
       if (!searchAccount) { return res.sendStatus(401); }
       return res.json({username: searchAccount.username, id: searchAccount.id});

@@ -41,7 +41,7 @@ require('./config/passport');
 app.use(require('./routes'));
 
 if (!isProduction) {
-  app.use(function(err, req, res, next) {
+  app.use((err, req, res, next) => {
     console.log(err.stack);
 
     res.status(err.status || 500);
@@ -56,7 +56,7 @@ if (!isProduction) {
 if (isProduction) {
   // production error handler
   // no stacktraces leaked to user
-  app.use(function(err, req, res, next) {
+  app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.json({'errors': {
       message: err.message,

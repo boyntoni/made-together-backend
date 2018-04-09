@@ -4,8 +4,8 @@ const Group = mongoose.model('Group');
 const Account = mongoose.model('Account');
 const auth = require('../auth');
 
-router.post('/accounts/create-group', auth.required, function(req, res, next) {
-    Account.findById(req.payload.id).then(function(account) {
+router.post('/accounts/create-group', auth.required, (req, res, next) => {
+    Account.findById(req.payload.id).then((account) => {
       if (!account) { return res.sendStatus(401); }
 
       let group = new Group( {
@@ -14,10 +14,10 @@ router.post('/accounts/create-group', auth.required, function(req, res, next) {
         admin: account,
       });
       group.addMember(account._id);
-      return group.save().then(function(){
+      return group.save().then(()=> {
         group.addGroupInvitations(req.body.groupMember);
         account.group = group._id;
-        account.save().then(function(){
+        account.save().then(()=> {
           return account.fullProfile(account, res);
         }).catch(next)
       });
@@ -25,16 +25,16 @@ router.post('/accounts/create-group', auth.required, function(req, res, next) {
 });
 
 
-router.post('/accounts/group-invitations/accept/:groupId', auth.required, function(req, res, next) {
-    Account.findById(req.payload.id).then(function(account) {
+router.post('/accounts/group-invitations/accept/:groupId', auth.required, (req, res, next) => {
+    Account.findById(req.payload.id).then((account) => {
       if (!account) { return res.sendStatus(401); }
       const groupId = req.params.groupId;
       account.removeGroupInvitation(groupId);
       account.group = groupId;
-      account.save().then(function() {
-        Group.findById(groupId).then(function(group) {
+      account.save().then(() => {
+        Group.findById(groupId).then((group) => {
           group.addMember(account._id);
-          group.save().then(function() {
+          group.save().then(() => {
             return group.fullDetail(group, res);
           }).catch(next);
         });
@@ -43,24 +43,22 @@ router.post('/accounts/group-invitations/accept/:groupId', auth.required, functi
 });
 
 
-router.post('/accounts/group-invitations/reject/:groupId', auth.required, function(req, res, next) {
-    Account.findById(req.payload.id).then(function(account) {
+router.post('/accounts/group-invitations/reject/:groupId', auth.required, (req, res, next) => {
+    Account.findById(req.payload.id).then((account) => {
       if (!account) { return res.sendStatus(401); }
       const groupId = req.params.groupId;
       account.removeGroupInvitation(groupId);
-      return account.save().then(function() {
+      return account.save().then(() => {
         return account.fullProfile(res);
       }).catch(next);
     }).catch(next);
 });
 
-router.get('/groups/:groupId', auth.required, function (req, res, next) {
-  Account.findById(req.payload.id).then(function (account) {
-    console.log("finding group");
+router.get('/groups/:groupId', auth.required,  (req, res, next) => {
+  Account.findById(req.payload.id).then( (account) => {
     if (!account) { return res.sendStatus(401); }
     const groupId = req.params.groupId;
-    console.log(groupId)
-    Group.findById(groupId).then(function(group) {
+    Group.findById(groupId).then((group) => {
       return group.fullDetail(group, res)
     }).catch(next); 
   }).catch(next);

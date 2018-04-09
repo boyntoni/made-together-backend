@@ -25,7 +25,7 @@ const GroupSchema = new mongoose.Schema({
 }, {timestamps: true});
 
 
-GroupSchema.methods.fullDetail = function (group, res) {
+GroupSchema.methods.fullDetail = function(group, res){
   let populateOpts = [
       { path: 'members', select: '_id username', model: 'Account'},
       { path: 'restaurants', model: 'Restaurant'},
@@ -33,16 +33,16 @@ GroupSchema.methods.fullDetail = function (group, res) {
       { path: 'destinations', model: 'Destination' },
       { path: 'shows', model: 'Show' }
   ]
-  this.constructor.populate(this, populateOpts, function (err, populatedGroup) {
+  this.constructor.populate(this, populateOpts, (err, populatedGroup) => {
     if (err) { return next(err); }
     return res.json({ group: populatedGroup });
   });
 };
 
-GroupSchema.methods.addGroupInvitations = function(accountId){
+GroupSchema.methods.addGroupInvitations = (accountId) => {
   var self = this;
   if (accountId) {
-      Account.findById(accountId).then(function(account) {
+      Account.findById(accountId).then((account) => {
         if (!account) { return res.sendStatus(401); }
         account.addGroupInvitation(self.id);
       });
@@ -50,7 +50,7 @@ GroupSchema.methods.addGroupInvitations = function(accountId){
   return;
 }
 
-GroupSchema.methods.addMember = function(id){
+GroupSchema.methods.addMember = (id) => {
   if(this.members.indexOf(id) === -1){
     this.members.push(id);
     this.save();
@@ -58,12 +58,12 @@ GroupSchema.methods.addMember = function(id){
   return;
 };
 
-GroupSchema.methods.removeMember = function(id){
+GroupSchema.methods.removeMember = (id) => {
   this.members.remove(id);
   this.save();
 };
 
-GroupSchema.methods.addRestaurant = function(id){
+GroupSchema.methods.addRestaurant = (id) => {
   if(this.restaurants.indexOf(id) === -1){
     this.restaurants.push(id);
     this.save();
@@ -71,12 +71,12 @@ GroupSchema.methods.addRestaurant = function(id){
   return;
 };
 
-GroupSchema.methods.removeRestaurant = function(id){
+GroupSchema.methods.removeRestaurant = (id) => {
   this.restaurants.remove(id);
   this.save();
 };
 
-GroupSchema.methods.addMovie = function (id) {
+GroupSchema.methods.addMovie = (id) => {
   if (this.movies.indexOf(id) === -1) {
     this.movies.push(id);
     this.save();
@@ -84,12 +84,12 @@ GroupSchema.methods.addMovie = function (id) {
   return;
 };
 
-GroupSchema.methods.removeMovie= function (id) {
+GroupSchema.methods.removeMovie= (id) => {
   this.movies.remove(id);
   this.save();
 };
 
-GroupSchema.methods.addShow = function (id) {
+GroupSchema.methods.addShow = (id) => {
   if (this.shows.indexOf(id) === -1) {
     this.shows.push(id);
     this.save();
@@ -97,12 +97,12 @@ GroupSchema.methods.addShow = function (id) {
   return;
 };
 
-GroupSchema.methods.removeShow = function (id) {
+GroupSchema.methods.removeShow = (id) => {
   this.shows.remove(id);
   this.save();
 };
 
-GroupSchema.methods.addDestination = function (id) {
+GroupSchema.methods.addDestination = (id) => {
   if (this.destinations.indexOf(id) === -1) {
     this.destinations.push(id);
     this.save();
@@ -110,7 +110,7 @@ GroupSchema.methods.addDestination = function (id) {
   return;
 };
 
-GroupSchema.methods.removeDestination = function (id) {
+GroupSchema.methods.removeDestination = (id) => {
   this.destinations.remove(id);
   this.save();
 };

@@ -12,8 +12,8 @@ const RestaurantParser = require('../../utils/RestaurantParser');
 const CLIENT_ID = require('../../config').foursquareClientId;
 const CLIENT_SECRET = require('../../config').foursquareClientSecret;
 
-router.post('/restaurants/search', auth.required, function(req, res, next) {
-  Account.findById(req.payload.id).then(function(account){
+router.post('/restaurants/search', auth.required, (req, res, next) => {
+  Account.findById(req.payload.id).then((account) => {
     if (!account) { return res.sendStatus(401); }
     const searchQuery = req.body.searchTerm;
     const searchGeo = `${req.body.latitude},${req.body.longitude}`;
@@ -44,7 +44,7 @@ router.post('/restaurants/search', auth.required, function(req, res, next) {
   }).catch(next);
 });
 
-router.post('/restaurants/search', auth.required, function(req, res, next) {
+router.post('/restaurants/search', auth.required, (req, res, next) => {
   Account.findById(req.payload.id).then((account) => {
     if (!account) { return res.sendStatus(401); }
     const searchQuery = req.body.searchTerm;
@@ -76,20 +76,35 @@ router.post('/restaurants/search', auth.required, function(req, res, next) {
   }).catch(next);
 });
 
-router.post('/restaurants/add', auth.required, function(req, res, next){
-  Account.findById(req.payload.id).then(function(account) {
+router.post('/restaurants/add', auth.required, (req, res, next) => {
+  Account.findById(req.payload.id).then((account) => {
     if (!account) { return res.sendStatus(401); }
     const groupId = req.body.groupId;
-    const restaurant = req.body.restaurant;
-    Group.findById(groupId).then(function(group) {
+    const restaurantData = req.body.restaurantData;
+    const restaurant = new Restaurant(restaurantData);
+    Group.findById(groupId).then((group) => {
       if (!group) { return res.sendStatus(401); }
-      restaurant.save().then(function() {
+      restaurant.save().then(() => {
         if (restaurant) {
           group.addRestaurant(restaurant.id);
           return group.fullDetail(group, res)
         }
       }).catch(next);
     });
+  });
+});
+
+router.post('/restaurants/remove', auth.required, (req, res, next) => {
+  Account.findById(req.payload.id).then((account) => {
+    if (!account) { return res.sendStatus(401); }
+    const groupId = req.body.groupId;
+    const restaurantId = req.body.restaurantId;
+    Group.findById(groupId).then((group) => {
+      if (!group) { return res.sendStatus(401); }
+      Restaurant.findByIdAndRemove(restaurantId).then(() => {
+        return group.fullDetail(group, res);
+      });
+    }).catch(next);
   });
 });
 

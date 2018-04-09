@@ -28,7 +28,7 @@ const AccountSchema = new mongoose.Schema({
 
 AccountSchema.plugin(require('mongoose-bcrypt'));
 
-AccountSchema.pre('save', function(next){
+AccountSchema.pre('save', (next) => {
   if(!this.isModified('password')) {
     return next();
   }
@@ -41,7 +41,7 @@ AccountSchema.pre('save', function(next){
   }
 });
 
-AccountSchema.methods.validPassword = function(attemptedPassword) {
+AccountSchema.methods.validPassword = (attemptedPassword) => {
   try {
     return bcrypt.compare(attemptedPassword, this.password);
   } catch (err) {
@@ -49,7 +49,7 @@ AccountSchema.methods.validPassword = function(attemptedPassword) {
   }
 };
 
-AccountSchema.methods.generateJWT = function() {
+AccountSchema.methods.generateJWT = () => {
   let today = new Date();
   let exp = new Date(today);
   exp.setDate(today.getDate() + 60);
@@ -67,25 +67,25 @@ AccountSchema.methods.fullProfile = function(account, res) {
     { path: 'groupInvitations', select: '_id name', model: 'Group',
       populate: { path: 'admin', select: 'username', model: 'Account'}}
   ]
-  this.constructor.populate(this, populateOpts, function(err, populatedAccount) {
+  this.constructor.populate(this, populateOpts, (err, populatedAccount) => {
     if (err) { return next(err); }
     let token = account.generateJWT();
     return res.json({account: populatedAccount, token: token});
   });
 };
 
-AccountSchema.methods.removeGroup = function(){
+AccountSchema.methods.removeGroup = () => {
   return this.group = null;
 };
 
-AccountSchema.methods.addGroupInvitation = function(id){
+AccountSchema.methods.addGroupInvitation = (id) => {
   if(this.groupInvitations.indexOf(id) === -1){
     this.groupInvitations.push(id);
   }
   return this.save();
 };
 
-AccountSchema.methods.removeGroupInvitation = function(id){
+AccountSchema.methods.removeGroupInvitation = (id) => {
   return this.groupInvitations.remove(id);
 };
 

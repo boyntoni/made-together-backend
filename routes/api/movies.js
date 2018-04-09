@@ -6,14 +6,14 @@ const Movie = mongoose.model('Movie');
 const auth = require('../auth');
 const fetch = require("node-fetch");
 
-router.post('/movies/add', auth.required, function (req, res, next) {
-    Account.findById(req.payload.id).then(function (account) {
+router.post('/movies/add', auth.required,  (req, res, next) => {
+    Account.findById(req.payload.id).then((account) => {
         if (!account) { return res.sendStatus(401); }
         const groupId = req.body.groupId;
         const movie = new Movie({ name: req.body.name });
-        Group.findById(groupId).then(function (group) {
+        Group.findById(groupId).then((group) => {
             if (!group) { return res.sendStatus(401); }
-            movie.save().then(function () {
+            movie.save().then(() => {
                 if (movie) {
                     group.addMovie(movie.id);
                     return group.fullDetail(group, res)
@@ -23,15 +23,13 @@ router.post('/movies/add', auth.required, function (req, res, next) {
     });
 });
 
-router.post('/movies/remove', auth.required, function (req, res, next) {
-    Account.findById(req.payload.id).then(function (account) {
+router.post('/movies/remove', auth.required, (req, res, next) => {
+    Account.findById(req.payload.id).then((account) => {
         if (!account) { return res.sendStatus(401); }
         const groupId = req.body.groupId;
         const movieId = req.body.itemId;
-        console.log('groupid :' + groupId);
-        Group.findById(groupId).then(function (group) {
+        Group.findById(groupId).then((group) => {
             if (!group) { return res.sendStatus(401); }
-            console.log('removing movie: ' + movieId);
             Movie.findByIdAndRemove(movieId).then(() => {
                 return group.fullDetail(group, res);
             });

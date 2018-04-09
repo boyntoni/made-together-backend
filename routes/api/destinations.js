@@ -6,14 +6,14 @@ const Destination = mongoose.model('Destination');
 const auth = require('../auth');
 const fetch = require("node-fetch");
 
-router.post('/destinations/add', auth.required, function (req, res, next) {
-    Account.findById(req.payload.id).then(function (account) {
+router.post('/destinations/add', auth.required, (req, res, next) => {
+    Account.findById(req.payload.id).then((account) => {
         if (!account) { return res.sendStatus(401); }
         const groupId = req.body.groupId;
         const destination = new Destination({ name: req.body.name });
-        Group.findById(groupId).then(function (group) {
+        Group.findById(groupId).then((group) => {
             if (!group) { return res.sendStatus(401); }
-            destination.save().then(function () {
+            destination.save().then(() => {
                 if (destination) {
                     group.addDestination(destination.id);
                     return group.fullDetail(group, res)
@@ -23,15 +23,13 @@ router.post('/destinations/add', auth.required, function (req, res, next) {
     });
 });
 
-router.post('/destinations/remove', auth.required, function (req, res, next) {
-    Account.findById(req.payload.id).then(function (account) {
+router.post('/destinations/remove', auth.required, (req, res, next) => {
+    Account.findById(req.payload.id).then((account) => {
         if (!account) { return res.sendStatus(401); }
         const groupId = req.body.groupId;
         const destinationId = req.body.itemId;
-        console.log('groupid :' + groupId);
-        Group.findById(groupId).then(function (group) {
+        Group.findById(groupId).then((group) => {
             if (!group) { return res.sendStatus(401); }
-            console.log('removing destination: ' + destinationId);
             destination.findByIdAndRemove(destinationId).then(() => {
                 return group.fullDetail(group, res);
             });

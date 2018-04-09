@@ -16,7 +16,7 @@ const RestaurantSchema = new mongoose.Schema({
   longitude: { type: Number }
 }, {timestamps: true});
 
-RestaurantSchema.statics.parseSearch = function(restaurants) {
+RestaurantSchema.statics.parseSearch = (restaurants) => {
   return restaurants.map((restaurant) => {
     const restaurantData = restaurant.venue;
     const newRestaurantData = {
@@ -27,7 +27,6 @@ RestaurantSchema.statics.parseSearch = function(restaurants) {
         categoryId: restaurantData.categories[0].id,
         rating: restaurantData.rating,
         formattedAddress: restaurantData.location.formattedAddress.join(' '),
-        hours: restaurantData.hours.status,
         latitude: restaurantData.location.latitude,
         longitude: restaurantData.location.longitude
       };
