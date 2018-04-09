@@ -15,11 +15,27 @@ router.post('/shows/add', auth.required, function (req, res, next) {
             if (!group) { return res.sendStatus(401); }
             show.save().then(function () {
                 if (show) {
-                    group.addshow(show.id);
+                    group.addShow(show.id);
                     return group.fullDetail(group, res)
                 }
             }).catch(next);
         });
+    });
+});
+
+router.post('/shows/remove', auth.required, function (req, res, next) {
+    Account.findById(req.payload.id).then(function (account) {
+        if (!account) { return res.sendStatus(401); }
+        const groupId = req.body.groupId;
+        const showId = req.body.itemId;
+        console.log('groupid :' + groupId);
+        Group.findById(groupId).then(function (group) {
+            if (!group) { return res.sendStatus(401); }
+            console.log('removing show: ' + showId);
+            show.findByIdAndRemove(showId).then(() => {
+                return group.fullDetail(group, res);
+            });
+        }).catch(next);
     });
 });
 
