@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const RestaurantSchema = new mongoose.Schema({
   name: { type: String },
@@ -26,7 +26,7 @@ RestaurantSchema.statics.parseSearch = (restaurants) => {
         category: restaurantData.categories[0].shortName,
         categoryId: restaurantData.categories[0].id,
         rating: restaurantData.rating,
-        formattedAddress: restaurantData.location.formattedAddress.join(' '),
+        formattedAddress: restaurantData.location.formattedAddress.join(" "),
         latitude: restaurantData.location.latitude,
         longitude: restaurantData.location.longitude
       };
@@ -34,4 +34,4 @@ RestaurantSchema.statics.parseSearch = (restaurants) => {
     });
 }
 
-module.exports = mongoose.model('Restaurant', RestaurantSchema);
+module.exports = mongoose.model("Restaurant", RestaurantSchema);

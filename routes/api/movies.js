@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
-const router = require('express').Router();
-const Group = mongoose.model('Group');
-const Account = mongoose.model('Account');
-const Movie = mongoose.model('Movie');
-const auth = require('../auth');
+const mongoose = require("mongoose");
+const router = require("express").Router();
+const Group = mongoose.model("Group");
+const Account = mongoose.model("Account");
+const Movie = mongoose.model("Movie");
+const auth = require("../auth");
 const fetch = require("node-fetch");
 
-router.post('/movies/add', auth.required,  (req, res, next) => {
+router.post("/movies/add", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return res.sendStatus(401); }
         const groupId = req.body.groupId;
@@ -23,7 +23,7 @@ router.post('/movies/add', auth.required,  (req, res, next) => {
     });
 });
 
-router.post('/movies/remove', auth.required, (req, res, next) => {
+router.post("/movies/remove", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return res.sendStatus(401); }
         const groupId = req.body.groupId;

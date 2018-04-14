@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken');
-const secret = require('../config').secret;
+const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
+const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken");
+const secret = require("../config").secret;
 
 const AccountSchema = new mongoose.Schema({
   email: {
@@ -16,8 +16,8 @@ const AccountSchema = new mongoose.Schema({
     required: [true, "Username cannot be blank"],
     index: true
   },
-  group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group' },
-  groupInvitations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+  group: { type: mongoose.Schema.Types.ObjectId, ref: "Group" },
+  groupInvitations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],
   image: String,
   password: {
     type: String,
@@ -26,10 +26,10 @@ const AccountSchema = new mongoose.Schema({
   }
 }, {timestamps: true});
 
-AccountSchema.plugin(require('mongoose-bcrypt'));
+AccountSchema.plugin(require("mongoose-bcrypt"));
 
-AccountSchema.pre('save', (next) => {
-  if(!this.isModified('password')) {
+AccountSchema.pre("save", function(next) {
+  if(!this.isModified("password")) {
     return next();
   }
   try {
@@ -41,7 +41,7 @@ AccountSchema.pre('save', (next) => {
   }
 });
 
-AccountSchema.methods.validPassword = (attemptedPassword) => {
+AccountSchema.methods.validPassword = function(attemptedPassword){
   try {
     return bcrypt.compare(attemptedPassword, this.password);
   } catch (err) {
@@ -49,7 +49,7 @@ AccountSchema.methods.validPassword = (attemptedPassword) => {
   }
 };
 
-AccountSchema.methods.generateJWT = () => {
+AccountSchema.methods.generateJWT = function() {
   let today = new Date();
   let exp = new Date(today);
   exp.setDate(today.getDate() + 60);
@@ -63,9 +63,9 @@ AccountSchema.methods.generateJWT = () => {
 
 AccountSchema.methods.fullProfile = function(account, res) {
   let populateOpts = [
-    { path: 'group' , model: 'Group'},
-    { path: 'groupInvitations', select: '_id name', model: 'Group',
-      populate: { path: 'admin', select: 'username', model: 'Account'}}
+    { path: "group" , model: "Group"},
+    { path: "groupInvitations", select: "_id name", model: "Group",
+      populate: { path: "admin", select: "username", model: "Account"}}
   ]
   this.constructor.populate(this, populateOpts, (err, populatedAccount) => {
     if (err) { return next(err); }
@@ -74,20 +74,20 @@ AccountSchema.methods.fullProfile = function(account, res) {
   });
 };
 
-AccountSchema.methods.removeGroup = () => {
+AccountSchema.methods.removeGroup = function() {
   return this.group = null;
 };
 
-AccountSchema.methods.addGroupInvitation = (id) => {
+AccountSchema.methods.addGroupInvitation = function(id) {
   if(this.groupInvitations.indexOf(id) === -1){
     this.groupInvitations.push(id);
   }
   return this.save();
 };
 
-AccountSchema.methods.removeGroupInvitation = (id) => {
+AccountSchema.methods.removeGroupInvitation = function(id) {
   return this.groupInvitations.remove(id);
 };
 
 
-module.exports = mongoose.model('Account', AccountSchema);
+module.exports = mongoose.model("Account", AccountSchema);

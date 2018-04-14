@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
-const router = require('express').Router();
-const Group = mongoose.model('Group');
-const Account = mongoose.model('Account');
-const Show = mongoose.model('Show');
-const auth = require('../auth');
+const mongoose = require("mongoose");
+const router = require("express").Router();
+const Group = mongoose.model("Group");
+const Account = mongoose.model("Account");
+const Show = mongoose.model("Show");
+const auth = require("../auth");
 const fetch = require("node-fetch");
 
-router.post('/shows/add', auth.required, (req, res, next) => {
+router.post("/shows/add", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then(function (account) {
         if (!account) { return res.sendStatus(401); }
         const groupId = req.body.groupId;
@@ -23,7 +23,7 @@ router.post('/shows/add', auth.required, (req, res, next) => {
     });
 });
 
-router.post('/shows/remove', auth.required, function (req, res, next) {
+router.post("/shows/remove", auth.required, function (req, res, next) {
     Account.findById(req.payload.id).then(function (account) {
         if (!account) { return res.sendStatus(401); }
         const groupId = req.body.groupId;
