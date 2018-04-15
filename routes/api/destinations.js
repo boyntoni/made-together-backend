@@ -28,11 +28,12 @@ router.post("/destinations/remove", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
         const { groupId,
-                itemId } = req.body;
+            itemId } = req.body;
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
-            destination.findByIdAndRemove(itemId).then(() => {
-                return group.fullDetail(group, res);
+            Destination.findByIdAndRemove(itemId).then(() => {
+                // return group.fullDetail(group, res);
+                res.status(200).send();
             });
         }).catch(next);
     });

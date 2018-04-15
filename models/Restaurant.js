@@ -27,8 +27,8 @@ RestaurantSchema.statics.parseSearch = (restaurants) => {
         categoryId: restaurantData.categories[0].id,
         rating: restaurantData.rating,
         formattedAddress: restaurantData.location.formattedAddress.join(" "),
-        latitude: restaurantData.location.latitude,
-        longitude: restaurantData.location.longitude
+        latitude: restaurantData.location.lat,
+        longitude: restaurantData.location.lng
       };
       return newRestaurantData;
     });
