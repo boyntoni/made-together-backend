@@ -12,7 +12,8 @@ router.post("/movies/add", auth.required, (req, res, next) => {
 
         const { groupId, 
                 name} = req.body;
-
+        
+        console.log("adding " + name);
         const movie = new Movie({ name });
         
         Group.findById(groupId).then((group) => {
@@ -20,7 +21,8 @@ router.post("/movies/add", auth.required, (req, res, next) => {
             movie.save().then(() => {
                 if (movie) {
                     group.addMovie(movie.id);
-                    return group.fullDetail(group, res)
+                    // return group.fullDetail(group, res)
+                    res.status(200).send();
                 }
             }).catch(next);
         });
@@ -35,7 +37,8 @@ router.post("/movies/remove", auth.required, (req, res, next) => {
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
             Movie.findByIdAndRemove(itemId).then(() => {
-                return group.fullDetail(group, res);
+                // return group.fullDetail(group, res);
+                res.status(200).send();
             });
         }).catch(next);
     });
