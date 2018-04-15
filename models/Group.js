@@ -17,11 +17,6 @@ const GroupSchema = new mongoose.Schema({
   movies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }],
   shows: [{ type: mongoose.Schema.Types.ObjectId, ref: "Show" }],
   destinations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Destination" }],
-  image: {
-    type: String,
-    default: "https://static.productionready.io/images/smiley-cyrus.jpg"
-  },
-  // restaurants: [{ { type: mongoose.Schema.Types.ObjectId, ref: "Account" } }]
 }, {timestamps: true});
 
 

@@ -3,7 +3,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const Account = mongoose.model("Account");
 
-passport.use(new LocalStrategy(function(username, password, done){
+passport.use(new LocalStrategy((username, password, done) => {
     Account.findOne({ username: username }, (err, account) => {
       if (err) { return done(err); }
       if (!account) { return done(null, false); }

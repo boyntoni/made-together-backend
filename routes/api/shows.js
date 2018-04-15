@@ -7,13 +7,14 @@ const auth = require("../auth");
 const fetch = require("node-fetch");
 
 router.post("/shows/add", auth.required, (req, res, next) => {
-    Account.findById(req.payload.id).then(function (account) {
-        if (!account) { return res.sendStatus(401); }
-        const groupId = req.body.groupId;
-        const show = new Show({ name: req.body.name });
-        Group.findById(groupId).then(function (group) {
-            if (!group) { return res.sendStatus(401); }
-            show.save().then(function () {
+    Account.findById(req.payload.id).then((account) => {
+        if (!account) { return next({ status: 401 }) }
+        const { groupId,
+                name } = req.body
+        const show = new Show({ name });
+        Group.findById(groupId).then((group) => {
+            if (!group) { return next({ status: 401 }) }
+            show.save().then(() => {
                 if (show) {
                     group.addShow(show.id);
                     return group.fullDetail(group, res)
@@ -23,14 +24,14 @@ router.post("/shows/add", auth.required, (req, res, next) => {
     });
 });
 
-router.post("/shows/remove", auth.required, function (req, res, next) {
-    Account.findById(req.payload.id).then(function (account) {
-        if (!account) { return res.sendStatus(401); }
-        const groupId = req.body.groupId;
-        const showId = req.body.itemId;
-        Group.findById(groupId).then(function (group) {
-            if (!group) { return res.sendStatus(401); }
-            show.findByIdAndRemove(showId).then(() => {
+router.post("/shows/remove", auth.required, (req, res, next) => {
+    Account.findById(req.payload.id).then((account) => {
+        if (!account) { return next({ status: 401 }) }
+        const { groupId,
+                itemId } = req.body;
+        Group.findById(groupId).then((group) => {
+            if (!group) { return next({ status: 401 }) }
+            Show.findByIdAndRemove(itemId).then(() => {
                 return group.fullDetail(group, res);
             });
         }).catch(next);

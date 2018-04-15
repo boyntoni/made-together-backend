@@ -5,78 +5,76 @@ const Account = mongoose.model("Account");
 const auth = require("../auth");
 
 router.post("/accounts/login", (req, res, next)  => {
-    if(!req.body.username){
-      return res.status(422).json({errors: {username: "Username cannot be blank"}});
+    if(!req.body.username) {
+      const err = {
+        errorMessage: "Username must not be blank",
+        status: 400,
+      };
+      return next(err);
     }
 
-    if(!req.body.password){
-      return res.status(422).json({errors: {password: "Password cannot be blank"}});
+    if(!req.body.password) {
+      const err = {
+        errorMessage: "Password must not be blank",
+        status: 400,
+      };
+      return next(err);
     }
 
-    passport.authenticate("local", {session: false}, (err, account, info) => {
+    passport.authenticate("local", {session: true}, (err, account, info) => {
       if (err) { return next(err); }
-      let accountGroups;
-      let accountGroupInvitations;
-      if (account){
-        return account.fullProfile(account, res)
+      if (account) {
+        return account.fullProfile(account, res);
       } else {
-        return res.status(422).json(info);
+        const err = {
+          errorMessage: "Unable to find account. Try again.",
+          status: 400,
+        };
+        return next(err);
       }
     })(req, res, next);
 });
 
 router.post("/accounts", (req, res, next) => {
-  let account = new Account();
+  const { username,
+          password,
+        } = req.body;
 
-  account.username = req.body.username;
-  account.password = req.body.password;
-  account.email = req.body.email;
+  const account = new Account({
+    username,
+    password
+  });
 
   account.save().then(() => {
     if (account) {
       return account.fullProfile(account, res)
     } else {
-      return res.status(400)
+      const err = {
+        errorMessage: "Username already taken",
+        status: 400,
+      };
+      return next(err);
     }
   }).catch(next);
 });
 
-router.get("/account", auth.required, (req, res, next) => {
-  Account.findById(req.payload.id).then((account) => {
-    if(!account){ return res.sendStatus(401); }
-
-    return res.json({account: account.toAuthJSON()});
-  }).catch(next);
-});
-
-router.put("/account", auth.required, (req, res, next) => {
-  Account.findById(req.payload.id).then((account) => {
-    if(!account){ return res.sendStatus(401); }
-    // only update fields that were actually passed...
-    if(typeof req.body.account.username !== "undefined"){
-      account.username = req.body.account.username;
-    }
-    if(typeof req.body.account.image !== "undefined"){
-      account.image = req.body.account.image;
-    }
-    if(typeof req.body.account.password !== "undefined"){
-      // account.setPassword(req.body.account.password);
-    }
-
-    return account.save().then(() => {
-      return res.json({account: account.toAuthJSON()});
-    });
-  }).catch(next);
-});
-
-router.get("/accounts/:email/search", auth.required, (req, res,next) => {
+router.get("/accounts/:username/search", auth.required, (req, res, next) => {
   Account.findById(req.payload.id).then((account) => {
     if (!account) { return res.sendStatus(401); }
-    let accountEmail = req.params.email;
-    Account.findOne( { "email": accountEmail }, "username", (err, searchAccount)  => {
-      if (err) return handlerError(err);
-      if (!searchAccount) { return res.sendStatus(401); }
-      return res.json({username: searchAccount.username, id: searchAccount.id});
+    const { username } = req.params;
+    Account.findOne( { "username": username }, "username", (err, searchAccount)  => {
+      if (err) return next(err);
+      if (!searchAccount) { 
+        const err = {
+          errorMessage: "Cannot locate account",
+          status: 400,
+        };
+        return next(err);
+      }
+      return res.json({
+        username: searchAccount.username,
+        id: searchAccount.id,
+      });
     });
   });
 });

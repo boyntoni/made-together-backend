@@ -6,16 +6,22 @@ const auth = require("../auth");
 
 router.post("/accounts/create-group", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
-      if (!account) { return res.sendStatus(401); }
+      if (!account) { return next({ status: 401 }) }
 
-      let group = new Group( {
-        name: req.body.groupName,
-        image: req.body.groupImage,
+      const { groupName,
+              admin,
+              groupMember,
+            } = req.body;
+
+      const group = new Group( {
+        name: groupName,
         admin: account,
       });
+
       group.addMember(account._id);
+
       return group.save().then(()=> {
-        group.addGroupInvitations(req.body.groupMember);
+        group.addGroupInvitations(groupMember);
         account.group = group._id;
         account.save().then(()=> {
           return account.fullProfile(account, res);
@@ -27,8 +33,8 @@ router.post("/accounts/create-group", auth.required, (req, res, next) => {
 
 router.post("/accounts/group-invitations/accept/:groupId", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
-      if (!account) { return res.sendStatus(401); }
-      const groupId = req.params.groupId;
+      if (!account) { return next({ status: 401 }) }
+      const { groupId } = req.params;
       account.removeGroupInvitation(groupId);
       account.group = groupId;
       account.save().then(() => {
@@ -45,8 +51,8 @@ router.post("/accounts/group-invitations/accept/:groupId", auth.required, (req, 
 
 router.post("/accounts/group-invitations/reject/:groupId", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
-      if (!account) { return res.sendStatus(401); }
-      const groupId = req.params.groupId;
+      if (!account) { return next({ status: 401 }) }
+      const { groupId } = req.params;
       account.removeGroupInvitation(groupId);
       return account.save().then(() => {
         return account.fullProfile(res);
@@ -56,8 +62,8 @@ router.post("/accounts/group-invitations/reject/:groupId", auth.required, (req, 
 
 router.get("/groups/:groupId", auth.required,  (req, res, next) => {
   Account.findById(req.payload.id).then( (account) => {
-    if (!account) { return res.sendStatus(401); }
-    const groupId = req.params.groupId;
+    if (!account) { return next({ status: 401 }) }
+    const { groupId } = req.params;
     Group.findById(groupId).then((group) => {
       return group.fullDetail(group, res)
     }).catch(next); 

@@ -8,11 +8,15 @@ const fetch = require("node-fetch");
 
 router.post("/movies/add", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
-        if (!account) { return res.sendStatus(401); }
-        const groupId = req.body.groupId;
-        const movie = new Movie({ name: req.body.name });
+        if (!account) { return next({ status: 401 }) }
+
+        const { groupId, 
+                name} = req.body;
+
+        const movie = new Movie({ name });
+        
         Group.findById(groupId).then((group) => {
-            if (!group) { return res.sendStatus(401); }
+            if (!group) { return next({ status: 401 }) }
             movie.save().then(() => {
                 if (movie) {
                     group.addMovie(movie.id);
@@ -25,12 +29,12 @@ router.post("/movies/add", auth.required, (req, res, next) => {
 
 router.post("/movies/remove", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
-        if (!account) { return res.sendStatus(401); }
-        const groupId = req.body.groupId;
-        const movieId = req.body.itemId;
+        if (!account) { return next({ status: 401 }) }
+        const { groupId, 
+                itemId } = req.body;
         Group.findById(groupId).then((group) => {
-            if (!group) { return res.sendStatus(401); }
-            Movie.findByIdAndRemove(movieId).then(() => {
+            if (!group) { return next({ status: 401 }) }
+            Movie.findByIdAndRemove(itemId).then(() => {
                 return group.fullDetail(group, res);
             });
         }).catch(next);

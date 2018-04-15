@@ -5,11 +5,6 @@ const jwt = require("jsonwebtoken");
 const secret = require("../config").secret;
 
 const AccountSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: [true, "E-mail cannot be blank"],
-    index: true
-  },
   username: {
     type: String,
     lowercase: true,
@@ -18,7 +13,6 @@ const AccountSchema = new mongoose.Schema({
   },
   group: { type: mongoose.Schema.Types.ObjectId, ref: "Group" },
   groupInvitations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],
-  image: String,
   password: {
     type: String,
     required: true,
