@@ -14,14 +14,9 @@ const isProduction = process.env.NODE_ENV === "production"
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// app.use(methodOverride());
+app.use(methodOverride());
 app.use(session({ secret: "conduit", cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
 app.use(helmet());
-
-app.use(function (err, req, res, next) {
-  res.status(err.status || 400);
-  res.jsonp(err);
-});
 
 if(isProduction){
   mongoose.connect(process.env.MONGODB_URI);
@@ -39,5 +34,9 @@ require("./models/Destination");
 require("./config/passport");
 app.use(require("./routes"));
 
+app.use(function (err, req, res, next) {
+  res.status(err.status || 400);
+  res.json(err);
+});
 
 const server = app.listen(process.env.PORT || 3000, () => console.log(`Server listening at port ${server.address().port}.`));
