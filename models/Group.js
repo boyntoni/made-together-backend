@@ -21,7 +21,7 @@ const GroupSchema = new mongoose.Schema({
 
 
 GroupSchema.methods.fullDetail = function(group, res){
-  let populateOpts = [
+  const populateOpts = [
       { path: "members", select: "_id username", model: "Account"},
       { path: "restaurants", model: "Restaurant"},
       { path: "movies", model: "Movie" },
@@ -35,7 +35,7 @@ GroupSchema.methods.fullDetail = function(group, res){
 };
 
 GroupSchema.methods.addGroupInvitations = function(accountId) {
-  var self = this;
+  const self = this;
   if (accountId) {
       Account.findById(accountId).then((account) => {
         if (!account) { return res.sendStatus(401); }
@@ -46,7 +46,7 @@ GroupSchema.methods.addGroupInvitations = function(accountId) {
 }
 
 GroupSchema.methods.addMember = function(id) {
-  if(this.members.indexOf(id) === -1){
+  if (this.members.indexOf(id) === -1) {
     this.members.push(id);
     this.save();
   }
@@ -59,7 +59,7 @@ GroupSchema.methods.removeMember = function(id) {
 };
 
 GroupSchema.methods.addRestaurant = function(id) {
-  if(this.restaurants.indexOf(id) === -1){
+  if (this.restaurants.indexOf(id) === -1) {
     this.restaurants.push(id);
     this.save();
   }

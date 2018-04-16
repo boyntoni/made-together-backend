@@ -35,7 +35,7 @@ AccountSchema.pre("save", function(next) {
   }
 });
 
-AccountSchema.methods.validPassword = function(attemptedPassword){
+AccountSchema.methods.validPassword = function(attemptedPassword) {
   try {
     return bcrypt.compare(attemptedPassword, this.password);
   } catch (err) {
@@ -56,14 +56,14 @@ AccountSchema.methods.generateJWT = function() {
 };
 
 AccountSchema.methods.fullProfile = function(account, res) {
-  let populateOpts = [
+  const populateOpts = [
     { path: "group" , model: "Group"},
     { path: "groupInvitations", select: "_id name", model: "Group",
       populate: { path: "admin", select: "username", model: "Account"}}
   ]
   this.constructor.populate(this, populateOpts, (err, populatedAccount) => {
     if (err) { return next(err); }
-    let token = account.generateJWT();
+    const token = account.generateJWT();
     return res.json({account: populatedAccount, token: token});
   });
 };
