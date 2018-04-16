@@ -55,7 +55,7 @@ router.post("/accounts/group-invitations/reject/:groupId", auth.required, (req, 
       const { groupId } = req.params;
       account.removeGroupInvitation(groupId);
       return account.save().then(() => {
-        return account.fullProfile(res);
+        return account.fullProfile(account, res);
       }).catch(next);
     }).catch(next);
 });
