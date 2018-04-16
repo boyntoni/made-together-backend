@@ -39,4 +39,4 @@ app.use(function (err, req, res, next) {
   res.json(err);
 });
 
-const server = app.listen(process.env.PORT || 3000, () => console.log(`Server listening at port ${server.address().port}.`));
+const server = app.listen(process.env.PORT || 3000, () => console.log("Server running."));
