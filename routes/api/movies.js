@@ -13,7 +13,6 @@ router.post("/movies/add", auth.required, (req, res, next) => {
         const { groupId, 
                 name} = req.body;
         
-        console.log("adding " + name);
         const movie = new Movie({ name });
         
         Group.findById(groupId).then((group) => {

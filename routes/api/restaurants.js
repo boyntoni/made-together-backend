@@ -14,36 +14,49 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
   Account.findById(req.payload.id).then((account) => {
     if (!account) { return next({ status: 401 }) }
     const { searchTerm,
-            latitude,
-            longitude } = req.body;
+      searchAddress,
+      latitude,
+      longitude } = req.body;
     const searchGeo = `${latitude},${longitude}`;
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
-    const params = {
-      ll: searchGeo,
-      query: searchTerm,
-      limit: 15,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET
-    };
+    let params;
+    if (searchAddress) {
+      params = {
+        query: searchTerm,
+        limit: 15,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        near: searchAddress,
+      };
+    } else {
+      params = {
+        ll: searchGeo,
+        query: searchTerm,
+        limit: 15,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET
+      };
+    }
     const esc = encodeURIComponent;
     const query = Object.keys(params)
       .map(k => esc(k) + "=" + esc(params[k]))
       .join("&");
+    console.log("querying :" + query);
     const url = baseUrl + query
     fetch((url + query), {
       method: "GET"
     }).then(response => response.json())
-    .then((responseJson) => {
-      if (!responseJson.response.groups[0].items.length) {
-        const err = {
-          status: 400,
-          errorMessage: "No restaurants found",
+      .then((responseJson) => {
+        if (!responseJson.response.groups[0].items.length) {
+          const err = {
+            status: 400,
+            errorMessage: "No restaurants found",
+          }
+          return next(err);
         }
-        return next(err);
-      }
-      const restaurants = Restaurant.parseSearch(responseJson.response.groups[0].items);
-      return res.json({restaurants: restaurants});
-    });
+        const restaurants = Restaurant.parseSearch(responseJson.response.groups[0].items);
+        return res.json({ restaurants: restaurants });
+      });
   }).catch(next);
 });
 
@@ -52,9 +65,9 @@ router.post("/restaurants/add", auth.required, (req, res, next) => {
     if (!account) { return next({ status: 401 }) }
 
     const { groupId,
-            restaurantData 
+      restaurantData
     } = req.body;
-    
+
     const restaurant = new Restaurant(restaurantData);
 
     Group.findById(groupId).then((group) => {
