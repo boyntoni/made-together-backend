@@ -22,11 +22,11 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     let params;
     if (searchAddress) {
       params = {
+        near: searchAddress,
         query: searchTerm,
         limit: 15,
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
-        near: searchAddress,
       };
     } else {
       params = {
