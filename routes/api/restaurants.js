@@ -96,4 +96,17 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
   });
 });
 
+router.post("/restaurants/favorite", auth.required, (req, res, next) => {
+  Account.findById(req.payload.id).then((account) => {
+    if (!account) { return next({ status: 401 }) }
+    const { itemId } = req.body;
+    Restaurant.findById(itemId).then((restaurant) => {
+      restaurant.isFavorite = true;
+      restaurant.save().then(() => {
+        return res.status(200);
+      });
+    }).catch(next);
+  });
+});
+
 module.exports = router;

@@ -13,7 +13,8 @@ const RestaurantSchema = new mongoose.Schema({
   formattedContact: { type: String },
   hours: { type: String },
   latitude: { type: Number },
-  longitude: { type: Number }
+  longitude: { type: Number },
+  isFavorite: { type: Boolean },
 }, {timestamps: true});
 
 RestaurantSchema.statics.parseSearch = (restaurants) => {
