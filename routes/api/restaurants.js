@@ -41,7 +41,6 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     const query = Object.keys(params)
       .map(k => esc(k) + "=" + esc(params[k]))
       .join("&");
-    console.log("querying :" + query);
     const url = baseUrl + query
     fetch((url + query), {
       method: "GET"
