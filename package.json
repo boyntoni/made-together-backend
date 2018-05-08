@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "9.8.0"
+  },
   "scripts": {
     "dev": "DEBUG=express:* nodemon server.js",
     "server": "NODE_ENV=dev nodemon server.js",
