@@ -46,7 +46,8 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
       method: "GET"
     }).then(response => response.json())
       .then((responseJson) => {
-        if (!responseJson.response.groups[0].items.length) {
+        console.log(responseJson)
+        if (!responseJson.response.groups || !responseJson.response.groups[0].items.length) {
           const err = {
             status: 400,
             errorMessage: "No restaurants found",
