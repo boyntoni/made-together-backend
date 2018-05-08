@@ -74,9 +74,10 @@ router.post("/restaurants/add", auth.required, (req, res, next) => {
       console.log('old restaurant numbers -- add', group.restaurants.length);
       restaurant.save().then(() => {
         if (restaurant) {
-          group.addRestaurant(restaurant.id);
-          console.log('new restaurant numbers -- add', group.restaurants.length);
-          return group.fullDetail(group, res)
+          group.addRestaurant(restaurant.id).then(() => {
+            console.log('new restaurant numbers -- add', group.restaurants.length);
+            return group.fullDetail(group, res)
+          }).catch(next);
         }
       }).catch(next);
     });
@@ -92,10 +93,11 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
     Group.findById(groupId).then((group) => {
       console.log("group found")
       if (!group) { return next({ status: 401 }) }
-      console.log('old restaurant numbers -- remove', group.restaurants.length);
       Restaurant.findByIdAndRemove(restaurantId).then(() => {
-        console.log('new restaurant numbers -- remove', group.restaurants.length);
-        return group.fullDetail(group, res);
+        group.removeRestaurant(restaurantId).then(() => {
+          console.log('old restaurant numbers -- remove', group.restaurants.length);
+          return group.fullDetail(group, res);
+        }).catch(next);
       });
     }).catch(next);
   });
