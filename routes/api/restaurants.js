@@ -68,7 +68,7 @@ router.post("/restaurants/add", auth.required, (req, res, next) => {
     } = req.body;
 
     const restaurant = new Restaurant(restaurantData);
-
+    console.log('adding', restaurant);
     Group.findById(groupId).then((group) => {
       if (!group) { return next({ status: 401 }) }
       console.log('old restaurant numbers -- add', group.restaurants.length);
@@ -88,6 +88,7 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
     if (!account) { return next({ status: 401 }) }
     const groupId = req.body.groupId;
     const restaurantId = req.body.restaurantId;
+    console.log('removing', restaurantId);
     Group.findById(groupId).then((group) => {
       if (!group) { return next({ status: 401 }) }
       console.log('old restaurant numbers -- remove', group.restaurants.length);
