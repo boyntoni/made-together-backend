@@ -91,9 +91,11 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
     const restaurantId = req.body.restaurantId;
     console.log('finding group', groupId)
     Group.findById(groupId).then((group) => {
-      console.log("group found")
+      console.log("group found", group)
       if (!group) { return next({ status: 401 }) }
+      console.log('still going')
       Restaurant.findByIdAndRemove(restaurantId).then(() => {
+        console.log("and still going")
         group.removeRestaurant(restaurantId).then(() => {
           console.log('old restaurant numbers -- remove', group.restaurants.length);
           return group.fullDetail(group, res);
