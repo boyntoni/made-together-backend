@@ -36,9 +36,7 @@ router.post("/accounts/login", (req, res, next)  => {
 });
 
 router.post("/accounts", (req, res, next) => {
-  const { username,
-          password,
-        } = req.body;
+  const { username, password } = req.body;
 
   const account = new Account({
     username,

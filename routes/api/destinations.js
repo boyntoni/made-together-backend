@@ -10,8 +10,7 @@ router.post("/destinations/add", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
 
-        const { groupId,
-            name } = req.body;
+        const { groupId, name } = req.body;
 
         const destination = new Destination({ name });
 
@@ -31,8 +30,7 @@ router.post("/destinations/add", auth.required, (req, res, next) => {
 router.post("/destinations/remove", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
-        const { groupId,
-            itemName } = req.body;
+        const { groupId, itemName } = req.body;
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
             Destination.findOneAndRemove({ name: itemName }).then(() => {
@@ -45,11 +43,13 @@ router.post("/destinations/remove", auth.required, (req, res, next) => {
 router.post("/destinations/favorite", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
-        const { itemId } = req.body;
+        const { itemId, groupId } = req.body;
         Destination.findById(itemId).then((destination) => {
             destination.isFavorite = true;
             destination.save().then(() => {
-                return res.status(200);
+                Group.findById(groupId).then((group, res) => {
+                    return group.fullDetail(group, res);
+                })
             });
         }).catch(next);
     });

@@ -31,8 +31,7 @@ router.post("/shows/add", auth.required, (req, res, next) => {
 router.post("/shows/remove", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
-        const { groupId,
-            itemName } = req.body;
+        const { groupId, itemName } = req.body;
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
             Show.findOneAndRemove({ name: itemName }).then(() => {
@@ -45,11 +44,13 @@ router.post("/shows/remove", auth.required, (req, res, next) => {
 router.post("/shows/favorite", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
-        const { itemId } = req.body;
+        const { itemId, groupId } = req.body;
         Show.findById(itemId).then((show) => {
             show.isFavorite = true;
             show.save().then(() => {
-                return res.status(200).send();
+                Group.findById(groupId).then((group, res) => {
+                    return group.fullDetail(group, res);
+                }).catch(next);
             });
         }).catch(next);
     });
