@@ -47,7 +47,7 @@ router.post("/destinations/favorite", auth.required, (req, res, next) => {
         Destination.findOne({ "name": itemName }).then((destination) => {
             destination.isFavorite = true;
             destination.save().then(() => {
-                Group.findById(groupId).then((group, res) => {
+                Group.findById(groupId).then((group) => {
                     return group.fullDetail(group, res);
                 })
             });

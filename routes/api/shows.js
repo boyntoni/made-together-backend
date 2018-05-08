@@ -48,7 +48,7 @@ router.post("/shows/favorite", auth.required, (req, res, next) => {
         Show.findOne({ "name": itemName}).then((show) => {
             show.isFavorite = true;
             show.save().then(() => {
-                Group.findById(groupId).then((group, res) => {
+                Group.findById(groupId).then((group) => {
                     return group.fullDetail(group, res);
                 }).catch(next);
             });

@@ -104,7 +104,7 @@ router.post("/restaurants/favorite", auth.required, (req, res, next) => {
     Restaurant.findById(itemId).then((restaurant) => {
       restaurant.isFavorite = true;
       restaurant.save().then(() => {
-        Group.findById(groupId).then((group, res) => {
+        Group.findById(groupId).then((group) => {
           return group.fullDetail(group, res)
         }).catch(next);
       });
