@@ -9,14 +9,15 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     lowercase: true,
     required: [true, "Username cannot be blank"],
-    index: true
+    index: true,
+    unique: true,
   },
   group: { type: mongoose.Schema.Types.ObjectId, ref: "Group" },
   groupInvitations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],
   password: {
     type: String,
     required: true,
-    minlength: 3
+    minlength: 6,
   }
 }, {timestamps: true});
 
