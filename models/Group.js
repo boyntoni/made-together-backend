@@ -39,18 +39,27 @@ GroupSchema.methods.addGroupInvitations = function(accountId) {
   if (accountId) {
       Account.findById(accountId).then((account) => {
         if (!account) { return res.sendStatus(401); }
-        account.addGroupInvitation(self.id);
+        return account.addGroupInvitation(self.id);
+      }).catch(() => {
+        reject();
       });
   }
   return;
 }
 
 GroupSchema.methods.addMember = function(id) {
-  if (this.members.indexOf(id) === -1) {
-    this.members.push(id);
-    this.save();
-  }
-  return;
+  return new Promise((resolve, reject) => {
+    if (this.members.indexOf(id) === -1) {
+      this.members.push(id)
+      this.save().then(() => {
+        resolve();
+      }).catch(() => {
+        reject();
+      });
+    } else {
+      resolve();
+    }
+  });
 };
 
 GroupSchema.methods.removeMember = function(id) {
@@ -64,9 +73,12 @@ GroupSchema.methods.addRestaurant = function(id) {
       this.restaurants.push(id);
       this.save().then(() => {
         resolve();
-      }).catch(reject());
+      }).catch(() => {
+        reject();
+      });
+    } else {
+      resolve();
     }
-    resolve();
   });
 };
 
@@ -75,47 +87,88 @@ GroupSchema.methods.removeRestaurant = function(id) {
     this.restaurants.remove(id);
     this.save().then(() => {
       resolve();
-    }).catch(reject());
+    }).catch(() => {
+      reject();
+    });
   })
 };
 
 GroupSchema.methods.addMovie = function(id){
-  if (this.movies.indexOf(id) === -1) {
-    this.movies.push(id);
-    this.save();
-  }
-  return;
+  return new Promise((resolve, reject) => {
+    if (this.movies.indexOf(id) === -1) {
+      this.movies.push(id);
+      this.save().then(() => {
+        resolve();
+      }).catch(() => {
+        reject();
+      });
+    } else {
+      resolve();
+    }
+  });
 };
 
 GroupSchema.methods.removeMovie= function(id) {
-  this.movies.remove(id);
-  this.save();
+  return new Promise((resolve, reject) => {
+    this.movies.remove(id)
+    this.save().then(() => {
+      resolve();
+    }).catch(() => {
+      reject();
+    });
+  });
 };
 
 GroupSchema.methods.addShow = function(id) {
-  if (this.shows.indexOf(id) === -1) {
-    this.shows.push(id);
-    this.save();
-  }
-  return;
+  return new Promise((resolve, reject) => {
+    if (this.shows.indexOf(id) === -1) {
+      this.shows.push(id);
+      this.save().then(() => {
+        resolve();
+      }).catch(() => {
+        reject();
+      });
+    } else {
+      resolve();
+    }
+  });
 };
 
 GroupSchema.methods.removeShow = function(id) {
-  this.shows.remove(id);
-  this.save();
+  return new Promise((resolve, reject) => {
+    this.shows.remove(id);
+    return this.save().then(() => {
+      resolve();
+    }).catch(() => {
+      reject();
+    });
+  });
 };
 
 GroupSchema.methods.addDestination = function(id) {
-  if (this.destinations.indexOf(id) === -1) {
-    this.destinations.push(id);
-    this.save();
-  }
-  return;
+  return new Promise((resolve, reject) => {
+    if (this.destinations.indexOf(id) === -1) {
+      this.destinations.push(id);
+      return this.save().then(() => {
+        resolve();
+      }).catch(() => {
+        reject();
+      });
+    } else {
+      resolve();
+    }
+  });
 };
 
 GroupSchema.methods.removeDestination = function(id) {
-  this.destinations.remove(id);
-  this.save();
+  return new Promise((resolve, reject) => {
+    this.destinations.remove(id);
+    this.save().then(() => {
+      resolve();
+    }).catch(() => {
+      reject();
+    });
+  });
 };
 
 
