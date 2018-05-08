@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "DEBUG=express:* nodemon server.js",
     "server": "NODE_ENV=dev nodemon server.js",
-    "start": "node server.js"
+    "start": "NODE_ENV=production node server.js"
   },
   "author": "",
   "license": "ISC",
