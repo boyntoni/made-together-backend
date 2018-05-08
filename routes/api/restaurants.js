@@ -18,7 +18,6 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
       latitude,
       longitude } = req.body;
     const searchGeo = `${latitude},${longitude}`;
-    console.log('SEARCHING USING', CLIENT_ID, CLIENT_SECRET)
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
     let params;
     if (searchAddress) {
@@ -47,7 +46,6 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
       method: "GET"
     }).then(response => response.json())
       .then((responseJson) => {
-        console.log(responseJson)
         if (!responseJson.response.groups || !responseJson.response.groups[0].items.length) {
           const err = {
             status: 400,
@@ -73,9 +71,11 @@ router.post("/restaurants/add", auth.required, (req, res, next) => {
 
     Group.findById(groupId).then((group) => {
       if (!group) { return next({ status: 401 }) }
+      console.log('old restaurant numbers -- add', group.restaurants.length);
       restaurant.save().then(() => {
         if (restaurant) {
           group.addRestaurant(restaurant.id);
+          console.log('new restaurant numbers -- add', group.restaurants.length);
           return group.fullDetail(group, res)
         }
       }).catch(next);
@@ -90,7 +90,9 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
     const restaurantId = req.body.restaurantId;
     Group.findById(groupId).then((group) => {
       if (!group) { return next({ status: 401 }) }
+      console.log('old restaurant numbers -- remove', group.restaurants.length);
       Restaurant.findByIdAndRemove(restaurantId).then(() => {
+        console.log('new restaurant numbers -- remove', group.restaurants.length);
         return group.fullDetail(group, res);
       });
     }).catch(next);
