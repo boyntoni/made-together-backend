@@ -22,11 +22,11 @@
     "express-jwt": "^5.3.1",
     "express-session": "^1.15.6",
     "helmet": "^3.12.0",
-    "jsonwebtoken": "^8.2.0",
+    "jsonwebtoken": "^8.2.1",
     "method-override": "^2.3.10",
     "mongodb": "^2.2.35",
     "mongoose": "^4.13.12",
-    "mongoose-bcrypt": "^1.5.0",
+    "mongoose-bcrypt": "^1.5.1",
     "mongoose-unique-validator": "^1.0.6",
     "node-fetch": "^1.7.3",
     "passport": "^0.4.0",
@@ -34,6 +34,6 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "nodemon": "^1.17.3"
+    "nodemon": "^1.17.4"
   }
 }
