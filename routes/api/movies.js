@@ -43,6 +43,7 @@ router.post("/movies/favorite", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
         const { itemName, groupId } = req.body;
+        console.log("GROUP ID", groupId);
         Movie.findOne({ "name": itemName }).then((movie) => {
             movie.isFavorite = true;
             movie.save().then(() => {
