@@ -18,6 +18,7 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
       latitude,
       longitude } = req.body;
     const searchGeo = `${latitude},${longitude}`;
+    console.log('SEARCHING USING', CLIENT_ID, CLIENT_SECRET)
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
     let params;
     if (searchAddress) {
