@@ -68,15 +68,12 @@ router.post("/restaurants/add", auth.required, (req, res, next) => {
     } = req.body;
 
     const restaurant = new Restaurant(restaurantData);
-    console.log('adding', restaurant);
     Group.findById(groupId).then((group) => {
       if (!group) { return next({ status: 401 }) }
-      console.log('old restaurant numbers -- add', group.restaurants.length);
       restaurant.save().then(() => {
         if (restaurant) {
           group.addRestaurant(restaurant.id).then(() => {
-            console.log('new restaurant numbers -- add', group.restaurants.length);
-            return group.fullDetail(group, res)
+            res.status(200);
           }).catch(next);
         }
       }).catch(next);
@@ -89,16 +86,14 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
     if (!account) { return next({ status: 401 }) }
     const groupId = req.body.groupId;
     const restaurantId = req.body.restaurantId;
-    console.log('finding group', groupId)
     Group.findById(groupId).then((group) => {
-      console.log("group found", group)
+
       if (!group) { return next({ status: 401 }) }
-      console.log('still going')
-      Restaurant.findByIdAndRemove(restaurantId).then(() => {
-        console.log("and still going")
-        group.removeRestaurant(restaurantId).then(() => {
-          console.log('old restaurant numbers -- remove', group.restaurants.length);
-          return group.fullDetail(group, res);
+
+      group.removeRestaurant(restaurantId).then(() => {
+  
+        Restaurant.findByIdAndRemove(restaurantId).then(() => {
+          res.status(200);
         }).catch(next);
       });
     }).catch(next);
