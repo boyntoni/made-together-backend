@@ -47,7 +47,7 @@ router.post("/movies/favorite", auth.required, (req, res, next) => {
         Movie.findOne({ "name": itemName }).then((movie) => {
             movie.isFavorite = true;
             movie.save().then(() => {
-                Group.findById(groupId).then((group, res) => {
+                Group.findById(groupId).then((group) => {
                     return group.fullDetail(group, res);
                 }).catch(next);
             });
