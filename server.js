@@ -39,4 +39,8 @@ app.use(function (err, req, res, next) {
   res.json(err);
 });
 
+app.get("/", (req, res) => {
+  res.send("Connected");
+});
+
 const server = app.listen(process.env.PORT || 3000, () => console.log("Server running."));
