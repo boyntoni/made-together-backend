@@ -33,7 +33,7 @@ router.post("/destinations/remove", auth.required, (req, res, next) => {
         const { groupId, itemName } = req.body;
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
-            Destination.findOneAndRemove({ name: itemName }).then(() => {
+            Destination.findOneAndRemove({ "name": itemName }).then(() => {
                 return group.fullDetail(group, res);
             });
         }).catch(next);
@@ -44,7 +44,7 @@ router.post("/destinations/favorite", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
         const { itemName, groupId } = req.body;
-        Destination.findOne({ name: itemName }).then((destination) => {
+        Destination.findOne({ "name": itemName }).then((destination) => {
             destination.isFavorite = true;
             destination.save().then(() => {
                 Group.findById(groupId).then((group, res) => {

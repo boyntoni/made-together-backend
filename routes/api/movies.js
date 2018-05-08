@@ -32,7 +32,7 @@ router.post("/movies/remove", auth.required, (req, res, next) => {
         const { groupId, itemName } = req.body;
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
-            Movie.findOneAndRemove({ name: itemName }).then(() => {
+            Movie.findOneAndRemove({ "name": itemName }).then(() => {
                 return group.fullDetail(group, res);
             });
         }).catch(next);
@@ -43,7 +43,7 @@ router.post("/movies/favorite", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
         const { itemName, groupId } = req.body;
-        Movie.findOne({ name: itemName }).then((movie) => {
+        Movie.findOne({ "name": itemName }).then((movie) => {
             movie.isFavorite = true;
             movie.save().then(() => {
                 Group.findById(groupId).then((group, res) => {

@@ -34,7 +34,7 @@ router.post("/shows/remove", auth.required, (req, res, next) => {
         const { groupId, itemName } = req.body;
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
-            Show.findOneAndRemove({ name: itemName }).then(() => {
+            Show.findOneAndRemove({ "name": itemName }).then(() => {
                 return group.fullDetail(group, res)
             });
         }).catch(next);
@@ -45,7 +45,7 @@ router.post("/shows/favorite", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
         if (!account) { return next({ status: 401 }) }
         const { itemName, groupId } = req.body;
-        Show.findOne({ name: itemName}).then((show) => {
+        Show.findOne({ "name": itemName}).then((show) => {
             show.isFavorite = true;
             show.save().then(() => {
                 Group.findById(groupId).then((group, res) => {
