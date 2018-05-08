@@ -59,16 +59,24 @@ GroupSchema.methods.removeMember = function(id) {
 };
 
 GroupSchema.methods.addRestaurant = function(id) {
-  if (this.restaurants.indexOf(id) === -1) {
-    this.restaurants.push(id);
-    this.save();
-  }
-  return;
+  return new Promise((resolve, reject) => {
+    if (this.restaurants.indexOf(id) === -1) {
+      this.restaurants.push(id);
+      this.save().then(() => {
+        resolve();
+      }).catch(reject());
+    }
+    resolve();
+  });
 };
 
 GroupSchema.methods.removeRestaurant = function(id) {
-  this.restaurants.remove(id);
-  this.save();
+  return new Promise((resolve, reject) => {
+    this.restaurants.remove(id);
+    this.save().then(() => {
+      resolve();
+    }).catch(reject());
+  })
 };
 
 GroupSchema.methods.addMovie = function(id){
