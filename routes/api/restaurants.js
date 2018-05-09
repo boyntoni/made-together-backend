@@ -44,7 +44,8 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     const url = baseUrl + query
     fetch((url), {
       method: "GET"
-    }).then((responseJson) => {
+    }).then(response => response.json())
+    .then((responseJson) => {
         if (!responseJson.response.groups || !responseJson.response.groups[0].items.length) {
           const err = {
             status: 400,
