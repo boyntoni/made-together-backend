@@ -44,8 +44,7 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     const url = baseUrl + query
     fetch((url), {
       method: "GET"
-    }).then(response => response.json())
-      .then((responseJson) => {
+    }).then((responseJson) => {
         if (!responseJson.response.groups || !responseJson.response.groups[0].items.length) {
           const err = {
             status: 400,
@@ -85,13 +84,11 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
   Account.findById(req.payload.id).then((account) => {
     if (!account) { return next({ status: 401 }) }
     const { groupId, restaurantId } = req.body;
-    console.log(groupId, restaurantId)
     Group.findById(groupId).then((group) => {
 
       if (!group) { return next({ status: 401 }) }
       group.removeRestaurant(restaurantId).then(() => {
         Restaurant.findByIdAndRemove(restaurantId).then(() => {
-          console.log("ALL CLEAR")
           return res.send(200);
         }).catch(next);
       });
