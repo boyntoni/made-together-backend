@@ -50,7 +50,7 @@ router.post("/destinations/favorite", auth.required, (req, res, next) => {
             destination.isFavorite = true;
             destination.save().then(() => {
                 Group.findById(groupId).then((group) => {
-                    return group.fullDetail(group, res);
+                    return res.send(200);
                 })
             });
         }).catch(next);
