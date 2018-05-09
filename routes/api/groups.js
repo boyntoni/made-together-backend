@@ -20,7 +20,8 @@ router.post("/accounts/create-group", auth.required, (req, res, next) => {
 
       group.addMember(account._id);
 
-      return group.save().then(()=> {
+      return group.save().then(() => {
+        console.log("Saving group", group);
         group.addGroupInvitations(groupMember);
         account.group = group._id;
         account.save().then(()=> {
@@ -41,6 +42,7 @@ router.post("/accounts/group-invitations/accept/:groupId", auth.required, (req, 
         Group.findById(groupId).then((group) => {
           group.addMember(account._id);
           group.save().then(() => {
+            console.log("Account", account.username, "accepted group invitation", group);
             return group.fullDetail(group, res);
           }).catch(next);
         });
@@ -53,6 +55,7 @@ router.post("/accounts/group-invitations/reject/:groupId", auth.required, (req, 
     Account.findById(req.payload.id).then((account) => {
       if (!account) { return next({ status: 401 }) }
       const { groupId } = req.params;
+      console.log("Account", account.username, "rejected group invitation", groupId);
       account.removeGroupInvitation(groupId);
       return account.save().then(() => {
         return account.fullProfile(account, res);
@@ -65,6 +68,7 @@ router.get("/groups/:groupId", auth.required,  (req, res, next) => {
     if (!account) { return next({ status: 401 }) }
     const { groupId } = req.params;
     Group.findById(groupId).then((group) => {
+      console.log("Retrieving group", group);
       return group.fullDetail(group, res)
     }).catch(next); 
   }).catch(next);

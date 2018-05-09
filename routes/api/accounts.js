@@ -24,6 +24,7 @@ router.post("/accounts/login", (req, res, next)  => {
     passport.authenticate("local", {session: true}, (err, account, info) => {
       if (err) { return next(err); }
       if (account) {
+        console.log("Fetching account", account);
         return account.fullProfile(account, res);
       } else {
         const err = {
@@ -45,6 +46,7 @@ router.post("/accounts", (req, res, next) => {
 
   account.save().then(() => {
     if (account) {
+      console.log("Saved account", account);
       return account.fullProfile(account, res)
     } else {
       const err = {

@@ -69,6 +69,7 @@ router.post("/restaurants/add", auth.required, (req, res, next) => {
       if (!group) { return next({ status: 401 }) }
       restaurant.save().then(() => {
         if (restaurant) {
+          console.log("Adding restaurant", restaurant);
           group.addRestaurant(restaurant.id).then(() => {
             return res.json({
               item: restaurant
@@ -89,6 +90,7 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
       if (!group) { return next({ status: 401 }) }
       group.removeRestaurant(restaurantId).then(() => {
         Restaurant.findByIdAndRemove(restaurantId).then(() => {
+          console.log("Removing restaurant", restaurantId);
           return res.send(200);
         }).catch(next);
       });
@@ -103,9 +105,8 @@ router.post("/restaurants/favorite", auth.required, (req, res, next) => {
     Restaurant.findById(itemId).then((restaurant) => {
       restaurant.isFavorite = true;
       restaurant.save().then(() => {
-        Group.findById(groupId).then((group) => {
-          return res.send(200);
-        }).catch(next);
+        console.log("Adding favorite restaurant", restaurant);
+        return res.send(200);
       });
     }).catch(next);
   });

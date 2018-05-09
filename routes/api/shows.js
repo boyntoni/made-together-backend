@@ -19,6 +19,7 @@ router.post("/shows/add", auth.required, (req, res, next) => {
             if (!group) { return next({ status: 401 }) }
             show.save().then(() => {
                 if (show) {
+                    console.log("Adding show", show);
                     group.addShow(show.id).then(() => {
                         return res.json({
                             item: show,
@@ -37,6 +38,7 @@ router.post("/shows/remove", auth.required, (req, res, next) => {
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
             Show.findOneAndRemove({ "name": itemName }).then(() => {
+                console.log("Removed show", itemName);
                 return res.send(200);
             });
         }).catch(next);
@@ -50,9 +52,8 @@ router.post("/shows/favorite", auth.required, (req, res, next) => {
         Show.findOne({ "name": itemName}).then((show) => {
             show.isFavorite = true;
             show.save().then(() => {
-                Group.findById(groupId).then((group) => {
-                    return res.send(200);
-                }).catch(next);
+                console.log("Adding favorite show", show);
+                return res.send(200);
             });
         }).catch(next);
     });

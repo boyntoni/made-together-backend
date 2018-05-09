@@ -17,6 +17,7 @@ router.post("/movies/add", auth.required, (req, res, next) => {
             if (!group) { return next({ status: 401 }) }
             movie.save().then(() => {
                 if (movie) {
+                    console.log("Adding movie", movie);
                     group.addMovie(movie.id).then(() => {
                         return res.json({
                             item: movie,
@@ -35,6 +36,7 @@ router.post("/movies/remove", auth.required, (req, res, next) => {
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
             Movie.findOneAndRemove({ "name": itemName }).then(() => {
+                console.log("Removed movie", itemName);
                 return res.send(200);
             });
         }).catch(next);
@@ -48,9 +50,8 @@ router.post("/movies/favorite", auth.required, (req, res, next) => {
         Movie.findOne({ "name": itemName }).then((movie) => {
             movie.isFavorite = true;
             movie.save().then(() => {
-                Group.findById(groupId).then((group) => {
-                    return res.send(200);
-                }).catch(next);
+                console.log("Adding favorite movie", movie);
+                return res.send(200);
             });
         }).catch(next);
     });
