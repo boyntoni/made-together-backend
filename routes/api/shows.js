@@ -22,7 +22,6 @@ router.post("/shows/add", auth.required, (req, res, next) => {
                     group.addShow(show.id).then(() => {
                         return res.json({
                             item: show,
-                            itemType: "shows",
                         });
                     }).catch(next);
                 }

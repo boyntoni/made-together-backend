@@ -71,7 +71,9 @@ router.post("/restaurants/add", auth.required, (req, res, next) => {
       restaurant.save().then(() => {
         if (restaurant) {
           group.addRestaurant(restaurant.id).then(() => {
-            return group.fullDetail(group, res)
+            return res.json({
+              item: restaurant,
+            });
           }).catch(next);
         }
       }).catch(next);
@@ -90,7 +92,7 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
       group.removeRestaurant(restaurantId).then(() => {
   
         Restaurant.findByIdAndRemove(restaurantId).then(() => {
-          return group.fullDetail(group, res)
+          return res.status(200).send();
         }).catch(next);
       });
     }).catch(next);

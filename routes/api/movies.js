@@ -20,7 +20,6 @@ router.post("/movies/add", auth.required, (req, res, next) => {
                     group.addMovie(movie.id).then(() => {
                         return res.json({
                             item: movie,
-                            itemType: "movies",
                         });
                     }).catch(next);
                 }
