@@ -19,7 +19,10 @@ router.post("/destinations/add", auth.required, (req, res, next) => {
             destination.save().then(() => {
                 if (destination) {
                     group.addDestination(destination.id).then(() => {
-                        return group.fullDetail(group, res);
+                        return res.json({
+                            item: destination,
+                            itemType: "destinations",
+                        });
                     }).catch(next);
                 }
             }).catch(next);
