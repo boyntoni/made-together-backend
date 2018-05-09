@@ -28,6 +28,7 @@
     "mongoose": "^4.13.12",
     "mongoose-bcrypt": "^1.5.1",
     "mongoose-unique-validator": "^1.0.6",
+    "newrelic": "^4.1.0",
     "node-fetch": "^1.7.3",
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.1",
