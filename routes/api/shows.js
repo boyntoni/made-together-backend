@@ -37,7 +37,7 @@ router.post("/shows/remove", auth.required, (req, res, next) => {
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
             Show.findOneAndRemove({ "name": itemName }).then(() => {
-                return res.status(200).send();
+                return res.send(200);
             });
         }).catch(next);
     });
@@ -51,7 +51,7 @@ router.post("/shows/favorite", auth.required, (req, res, next) => {
             show.isFavorite = true;
             show.save().then(() => {
                 Group.findById(groupId).then((group) => {
-                    return res.status(200).send();
+                    return res.send(200);
                 }).catch(next);
             });
         }).catch(next);

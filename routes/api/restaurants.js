@@ -85,14 +85,13 @@ router.post("/restaurants/remove", auth.required, (req, res, next) => {
   Account.findById(req.payload.id).then((account) => {
     if (!account) { return next({ status: 401 }) }
     const { groupId, restaurantId } = req.body;
+    console.log(groupId, restaurantId)
     Group.findById(groupId).then((group) => {
 
       if (!group) { return next({ status: 401 }) }
-
       group.removeRestaurant(restaurantId).then(() => {
-  
         Restaurant.findByIdAndRemove(restaurantId).then(() => {
-          return res.status(200).send();
+          return res.send(200);
         }).catch(next);
       });
     }).catch(next);
