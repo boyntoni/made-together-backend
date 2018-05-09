@@ -21,6 +21,8 @@ router.post("/accounts/login", (req, res, next)  => {
       return next(err);
     }
 
+    console.log("Received login", req.body.username, req.body.password);
+
     passport.authenticate("local", {session: true}, (err, account, info) => {
       if (err) { return next(err); }
       if (account) {
