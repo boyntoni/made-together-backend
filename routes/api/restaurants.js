@@ -52,29 +52,29 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
   }).catch(next);
 });
 
-  router.post("/restaurants/add", auth.required, (req, res, next) => {
-    Account.findById(req.payload.id).then((account) => {
-      if (!account) { return next({ status: 401 }) }
+router.post("/restaurants/add", auth.required, (req, res, next) => {
+  Account.findById(req.payload.id).then((account) => {
+    if (!account) { return next({ status: 401 }) }
 
-      const { groupId, restaurantData } = req.body;
+    const { groupId, restaurantData } = req.body;
 
-      const restaurant = new Restaurant(restaurantData);
-      Group.findById(groupId).then((group) => {
-        if (!group) { return next({ status: 401 }) }
-        restaurant.save().then(() => {
-          if (restaurant) {
-            console.log("Adding restaurant", restaurant);
-            group.addRestaurant(restaurant.id).then(() => {
-              return res.json({
-                item: restaurant
-              });
-            }).catch(next);
-          }
-        }).catch(next);
-      });
+    const restaurant = new Restaurant(restaurantData);
+    Group.findById(groupId).then((group) => {
+      if (!group) { return next({ status: 401 }) }
+      restaurant.save().then(() => {
+        if (restaurant) {
+          console.log("Adding restaurant", restaurant);
+          group.addRestaurant(restaurant.id).then(() => {
+            return res.json({
+              item: restaurant
+            });
+          }).catch(next);
+        }
+      }).catch(next);
     });
-    })
+  });
 });
+
 
 router.post("/restaurants/remove", auth.required, (req, res, next) => {
   Account.findById(req.payload.id).then((account) => {
