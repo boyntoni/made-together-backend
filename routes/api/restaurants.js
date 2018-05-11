@@ -117,8 +117,9 @@ function fetchLongLat(lonLat, searchAddress) {
       fetch(url, {
         method: "GET",
       }).then((resp) => {
-        const latLon = `${resp.results[0].geometry.location.lat},${resp.results[0].geometry.location.lng}`;
-        resolve(latLon);
+        const calculatedLatLon = `${resp.results[0].geometry.location.lat},${resp.results[0].geometry.location.lng}`;
+        console.log(calculatedLatLon)
+        resolve(calculatedLatLon);
       }).catch(reject());
     }
   })
