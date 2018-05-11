@@ -7,10 +7,10 @@ const secret = require("../config").secret;
 const AccountSchema = new mongoose.Schema({
   username: {
     type: String,
+    unique: [true, "Username already taken"],
     lowercase: true,
     required: [true, "Username cannot be blank"],
     index: true,
-    unique: true,
   },
   group: { type: mongoose.Schema.Types.ObjectId, ref: "Group" },
   groupInvitations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],
