@@ -20,29 +20,19 @@ router.post("/accounts/login", (req, res, next)  => {
       };
       return next(err);
     }
-    
-    Account.findOne( { username: req.body.username }).then((account) => {
+
+    passport.authenticate("local", {session: true}, (err, account, info) => {
+      if (err) { return next(err); }
       if (account) {
+        return account.fullProfile(account, res);
+      } else {
         const err = {
-          errorMessage: "Username already taken",
+          errorMessage: "Unable to find account. Try again.",
           status: 400,
         };
         return next(err);
-      } else {
-        passport.authenticate("local", { session: true }, (err, account, info) => {
-          if (err) { return next(err); }
-          if (account) {
-            return account.fullProfile(account, res);
-          } else {
-            const err = {
-              errorMessage: "Unable to find account. Try again.",
-              status: 400,
-            };
-            return next(err);
-          }
-        })(req, res, next);
       }
-    })
+    })(req, res, next);
 });
 
 router.post("/accounts", (req, res, next) => {
