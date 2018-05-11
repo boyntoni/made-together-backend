@@ -11,7 +11,7 @@ const CLIENT_ID = process.env.foursquareClientId;
 const CLIENT_SECRET = process.env.foursquareClientSecret;
 const GOOGLE_MAP_KEY = process.env.GOOGLE_MAP_KEY;
 
-router.post("/restaurants/search", auth.required, async (req, res, next) => {
+router.post("/restaurants/search", auth.required, async function (req, res, next) {
   Account.findById(req.payload.id).then((account) => {
     if (!account) { return next({ status: 401 }) }
     const { searchTerm,
