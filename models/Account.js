@@ -47,7 +47,7 @@ AccountSchema.path("name").validate(function (value, done) {
       return done(!count)
     });
   }
-}, "This username already exists");
+}, { errorMessage: "This username already exists" });
 
 AccountSchema.methods.validPassword = function(attemptedPassword) {
   try {
