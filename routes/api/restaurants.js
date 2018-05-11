@@ -129,7 +129,7 @@ async function fetchLongLat(lonLat, searchAddress) {
 }
 
 async function requestGeo() {
-  return new Promise((resolve), reject) {
+  return new Promise((resolve, reject) => {
     const data = await fetch((url), {
       method: "GET",
     })
@@ -138,7 +138,7 @@ async function requestGeo() {
     } else {
       reject();
     }
-  }
+  });
 }
 
 module.exports = router;
