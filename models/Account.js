@@ -36,6 +36,19 @@ AccountSchema.pre("save", function(next) {
   }
 });
 
+AccountSchema.path("name").validate(function (value, done) {
+  if (!this.isNew) {
+    return done(true);
+  } else {
+    mongoose.models["Account"].count({ username: value }, (err, count) => {
+      if (err) {
+        return done(err);
+      }
+      return done(!count)
+    });
+  }
+}, "This username already exists");
+
 AccountSchema.methods.validPassword = function(attemptedPassword) {
   try {
     return bcrypt.compare(attemptedPassword, this.password);
