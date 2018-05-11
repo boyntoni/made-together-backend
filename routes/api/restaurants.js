@@ -21,15 +21,15 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     const searchGeo = searchAddress ? null : `${latitude},${longitude}`;
     console.log("SEARCH GEO BEFORE", searchGeo);
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
-    await fetchLongLat(searchGeo, searchAddress, next).then((latLon) => {
-      console.log("SEARCH GEO AFTER", latLon);
-      const searchParams = {
-        ll: latLon,
-        query: searchTerm,
-        limit: 15,
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET
-      };
+    const latLon = fetchLongLat(searchGeo, searchAddress, next)
+    console.log("SEARCH GEO AFTER", latLon);
+    const searchParams = {
+      ll: latLon,
+      query: searchTerm,
+      limit: 15,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET
+    };
       const esc = encodeURIComponent;
       const query = Object.keys(searchParams)
         .map(k => esc(k) + "=" + esc(params[k]))
@@ -49,8 +49,7 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
           }
           const restaurants = Restaurant.parseSearch(responseJson.response.groups[0].items);
           return res.json({ restaurants: restaurants });
-        });
-    }).catch(next);
+        }).catch(next);
   });
 
   router.post("/restaurants/add", auth.required, (req, res, next) => {
@@ -118,15 +117,16 @@ async function fetchLongLat(lonLat, searchAddress) {
       console.log("PREPARING TO SEARCH");
       const searchTerm = searchAddress.split(" ").join("+")
       const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
-      fetch((url), {
-        method: "GET",
-      }).then(response => response.json()).then((resp) => {
-        const calculatedLatLon = `${resp.results[0].geometry.location.lat},${resp.results[0].geometry.location.lng}`;
-        console.log(calculatedLatLon)
-        resolve(calculatedLatLon);
-      }).catch(next);
+      
     }
   })
+}
+
+async function requestGeo() {
+  const data = await fetch((url), {
+    method: "GET",
+  })
+  return data;
 }
 
 module.exports = router;
