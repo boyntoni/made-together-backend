@@ -11,7 +11,7 @@ const CLIENT_ID = process.env.foursquareClientId;
 const CLIENT_SECRET = process.env.foursquareClientSecret;
 const GOOGLE_MAP_KEY = process.env.GOOGLE_MAP_KEY;
 
-router.post("/restaurants/search", auth.required, (req, res, next) => {
+router.post("/restaurants/search", auth.required, async (req, res, next) => {
   Account.findById(req.payload.id).then((account) => {
     if (!account) { return next({ status: 401 }) }
     const { searchTerm,
@@ -20,34 +20,34 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
       longitude } = req.body;
     const searchGeo = searchAddress ? null : `${latitude},${longitude}`;
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
-    const ll = fetchLongLat(searchGeo, searchAddress, next)
-      const searchParams = {
-        ll: latLon,
-        query: searchTerm,
-        limit: 15,
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET
-      };
-      const esc = encodeURIComponent;
-      const query = Object.keys(searchParams)
-        .map(k => esc(k) + "=" + esc(params[k]))
-        .join("&");
-      console.log("SEARCHING", query);
-      const url = baseUrl + query
-      fetch((url), {
-        method: "GET"
-      }).then(response => response.json()).then((responseJson) => {
-          console.log('RESPONSE', responseJson);
-          if (!responseJson.response.groups || !responseJson.response.groups[0].items.length) {
-            const err = {
-              status: 400,
-              errorMessage: "No restaurants found",
-            }
-            return next(err);
+    const ll = await fetchLongLat(searchGeo, searchAddress, next)
+    const searchParams = {
+      ll: latLon,
+      query: searchTerm,
+      limit: 15,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET
+    };
+    const esc = encodeURIComponent;
+    const query = Object.keys(searchParams)
+      .map(k => esc(k) + "=" + esc(params[k]))
+      .join("&");
+    console.log("SEARCHING", query);
+    const url = baseUrl + query
+    fetch((url), {
+      method: "GET"
+    }).then(response => response.json()).then((responseJson) => {
+        console.log('RESPONSE', responseJson);
+        if (!responseJson.response.groups || !responseJson.response.groups[0].items.length) {
+          const err = {
+            status: 400,
+            errorMessage: "No restaurants found",
           }
-          const restaurants = Restaurant.parseSearch(responseJson.response.groups[0].items);
-          return res.json({ restaurants: restaurants });
-        }).catch(next);
+          return next(err);
+        }
+        const restaurants = Restaurant.parseSearch(responseJson.response.groups[0].items);
+        return res.json({ restaurants: restaurants });
+      }).catch(next);
   });
 
   router.post("/restaurants/add", auth.required, (req, res, next) => {
