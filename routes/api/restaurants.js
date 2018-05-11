@@ -21,7 +21,6 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     const searchGeo = searchAddress ? null : `${latitude},${longitude}`;
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
     fetchLongLat(searchGeo, searchAddress, next).then((latLon) => {
-      console.log('in promise', latLon);
       const searchParams = {
         ll: latLon,
         query: searchTerm,
@@ -33,7 +32,6 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
       const query = Object.keys(searchParams)
         .map(k => esc(k) + "=" + esc(searchParams[k]))
         .join("&");
-      console.log("SEARCHING", query);
       const url = baseUrl + query
       fetch((url), {
         method: "GET"
@@ -112,7 +110,6 @@ const fetchLongLat = async (lonLat, searchAddress, next) => {
   if (lonLat) {
     return lonLat;
   } else {
-    console.log(searchAddress);
     const calculatedLonLat = await asyncGeocode(lonLat, searchAddress, next);
     return calculatedLonLat;
   }
@@ -123,7 +120,6 @@ const asyncGeocode = async (lonLat, searchAddress, next) => {
   const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
   const response = await fetch(searchUrl);
   const responseJson = await response.json();
-  console.log(responseJson);
   const calculatedLatLon = `${responseJson.results[0].geometry.location.lat},${responseJson.results[0].geometry.location.lng}`;
   if (calculatedLatLon) {
     return calculatedLatLon;
