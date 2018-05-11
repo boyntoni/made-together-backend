@@ -20,7 +20,7 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
       longitude } = req.body;
     const searchGeo = searchAddress ? null : `${latitude},${longitude}`;
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
-    fetchLongLat(searchGeo, searchAddress, next).then((latLon) => {
+    return fetchLongLat(searchGeo, searchAddress, next).then((latLon) => {
       const searchParams = {
         ll: latLon,
         query: searchTerm,
@@ -108,22 +108,25 @@ router.post("/restaurants/favorite", auth.required, (req, res, next) => {
 });
 
 const fetchLongLat = async (lonLat, searchAddress, next) => {
-  return new Promise((resolve, reject) => {
-    if (lonLat) {
-      resolve(lonLat);
-    } else {
-      const searchTerm = searchAddress.split(" ").join("+")
-      const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
-      const response = await fetch(searchUrl);
-      const responseJson = await response.json();
-      const calculatedLatLon = `${responseJson.results[0].geometry.location.lat},${responseJson.results[0].geometry.location.lng}`;
-      if (calculatedLatLon) {
-        resolve(calculatedLonLat);
-      } else {
-        reject();
-      }
-    }
-  }).catch(reject);
+  if (lonLat) {
+    return lonLat;
+  } else {
+    const calculatedLonLat = await asyncGeocode(lonLat, searchAddress, next);
+    return calculatedLonLat;
+  }
+}
+
+const asyncGeocode = async (lonLat, searchAddress, next) => {
+  const searchTerm = searchAddress.split(" ").join("+")
+  const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
+  const response = await fetch(searchUrl);
+  const responseJson = await response.json();
+  const calculatedLatLon = `${responseJson.results[0].geometry.location.lat},${responseJson.results[0].geometry.location.lng}`;
+  if (calculatedLatLon) {
+    return calculatedLonLat;
+  } else {
+    throw new Error( { errorMessage: "Unable to fetch location" });
+  }
 }
 
 module.exports = router;
