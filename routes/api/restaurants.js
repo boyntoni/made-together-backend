@@ -108,7 +108,7 @@ router.post("/restaurants/favorite", auth.required, (req, res, next) => {
   });
 });
 
-function fetchLongLat(lonLat, searchAddress) {
+async function fetchLongLat(lonLat, searchAddress) {
   return new Promise((resolve, reject) => {
     console.log("in fetchhh", lonLat);
     if (lonLat) {
