@@ -11,7 +11,7 @@ const CLIENT_ID = process.env.foursquareClientId;
 const CLIENT_SECRET = process.env.foursquareClientSecret;
 const GOOGLE_MAP_KEY = process.env.GOOGLE_MAP_KEY;
 
-router.post("/restaurants/search", auth.required, async function (req, res, next) {
+router.post("/restaurants/search", auth.required, (req, res, next) => {
   Account.findById(req.payload.id).then((account) => {
     if (!account) { return next({ status: 401 }) }
     const { searchTerm,
@@ -20,23 +20,23 @@ router.post("/restaurants/search", auth.required, async function (req, res, next
       longitude } = req.body;
     const searchGeo = searchAddress ? null : `${latitude},${longitude}`;
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
-    const ll = await fetchLongLat(searchGeo, searchAddress, next)
-    const searchParams = {
-      ll: latLon,
-      query: searchTerm,
-      limit: 15,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET
-    };
-    const esc = encodeURIComponent;
-    const query = Object.keys(searchParams)
-      .map(k => esc(k) + "=" + esc(params[k]))
-      .join("&");
-    console.log("SEARCHING", query);
-    const url = baseUrl + query
-    fetch((url), {
-      method: "GET"
-    }).then(response => response.json()).then((responseJson) => {
+    fetchLongLat(searchGeo, searchAddress, next).then((latLon) => {
+      const searchParams = {
+        ll: latLon,
+        query: searchTerm,
+        limit: 15,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET
+      };
+      const esc = encodeURIComponent;
+      const query = Object.keys(searchParams)
+        .map(k => esc(k) + "=" + esc(params[k]))
+        .join("&");
+      console.log("SEARCHING", query);
+      const url = baseUrl + query
+      fetch((url), {
+        method: "GET"
+      }).then(response => response.json()).then((responseJson) => {
         console.log('RESPONSE', responseJson);
         if (!responseJson.response.groups || !responseJson.response.groups[0].items.length) {
           const err = {
@@ -47,8 +47,10 @@ router.post("/restaurants/search", auth.required, async function (req, res, next
         }
         const restaurants = Restaurant.parseSearch(responseJson.response.groups[0].items);
         return res.json({ restaurants: restaurants });
-      }).catch(next);
-  });
+      });
+    });
+  }).catch(next);
+});
 
   router.post("/restaurants/add", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
@@ -105,17 +107,23 @@ router.post("/restaurants/favorite", auth.required, (req, res, next) => {
   });
 });
 
-const fetchLongLat = async (lonLat, searchAddress) => {
-  if (lonLat) {
-    return lonLat;
-  } else {
-    const searchTerm = searchAddress.split(" ").join("+")
-    const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
-    const response = await fetch(searchUrl);
-    const responseJson = await response.json();
-    const calculatedLatLon = `${responseJson.results[0].geometry.location.lat},${responseJson.results[0].geometry.location.lng}`;  
-    return calculatedLatLon;
-  }
+const fetchLongLat = async (lonLat, searchAddress, next) => {
+  return new Promise((resolve, reject) => {
+    if (lonLat) {
+      resolve(lonLat);
+    } else {
+      const searchTerm = searchAddress.split(" ").join("+")
+      const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
+      const response = await fetch(searchUrl);
+      const responseJson = await response.json();
+      const calculatedLatLon = `${responseJson.results[0].geometry.location.lat},${responseJson.results[0].geometry.location.lng}`;
+      if (calculatedLatLon) {
+        resolve(calculatedLonLat);
+      } else {
+        reject();
+      }
+    }
+  }).catch(reject);
 }
 
 module.exports = router;
