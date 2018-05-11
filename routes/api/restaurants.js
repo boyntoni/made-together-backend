@@ -21,15 +21,15 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     const searchGeo = searchAddress ? null : `${latitude},${longitude}`;
     console.log("SEARCH GEO BEFORE", searchGeo);
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
-    const latLon = fetchLongLat(searchGeo, searchAddress, next)
-    console.log("SEARCH GEO AFTER", latLon);
-    const searchParams = {
-      ll: latLon,
-      query: searchTerm,
-      limit: 15,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET
-    };
+    const ll = fetchLongLat(searchGeo, searchAddress, next)
+      console.log("SEARCH GEO AFTER", latLon);
+      const searchParams = {
+        ll: latLon,
+        query: searchTerm,
+        limit: 15,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET
+      };
       const esc = encodeURIComponent;
       const query = Object.keys(searchParams)
         .map(k => esc(k) + "=" + esc(params[k]))
@@ -107,38 +107,17 @@ router.post("/restaurants/favorite", auth.required, (req, res, next) => {
   });
 });
 
-async function fetchLongLat(lonLat, searchAddress) {
-  return new Promise((resolve, reject) => {
-    console.log("in fetchhh", lonLat);
-    if (lonLat) {
-      console.log("OOOOOOPPPPSSSSS")
-      resolve(lonLat);
-    } else {
-      console.log("PREPARING TO SEARCH");
-      const searchTerm = searchAddress.split(" ").join("+")
-      const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
-      requestGeo(searchUrl).then((geoData) => {
-        if (geoData) {
-          resolve(geoData);
-        } else {
-          reject();
-        }
-      }).catch(reject);
-    }
-  })
-}
-
-async function requestGeo() {
-  return new Promise((resolve, reject) => {
-    const data = await fetch((url), {
-      method: "GET",
-    })
-    if (data) {
-      resolve(data);
-    } else {
-      reject();
-    }
-  });
+const fetchLongLat = async (lonLat, searchAddress) => {
+  if (lonLat) {
+    return lonLat;
+  } else {
+    console.log("PREPARING TO SEARCH");
+    const searchTerm = searchAddress.split(" ").join("+")
+    const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
+    const response = await fetch(searchUrl);
+    const calculatedLatLon = `${response.results[0].geometry.location.lat},${response.results[0].geometry.location.lng}`;  
+    return calculatedLatLon;
+  }
 }
 
 module.exports = router;
