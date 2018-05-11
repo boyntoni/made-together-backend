@@ -117,21 +117,28 @@ async function fetchLongLat(lonLat, searchAddress) {
       console.log("PREPARING TO SEARCH");
       const searchTerm = searchAddress.split(" ").join("+")
       const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
-      const geoData = await requestGeo(searchUrl);
-      if (geoData) {
-        resolve(geoData);
-      } else {
-        reject();
-      }
+      requestGeo(searchUrl).then((geoData) => {
+        if (geoData) {
+          resolve(geoData);
+        } else {
+          reject();
+        }
+      }).catch(reject);
     }
   })
 }
 
 async function requestGeo() {
-  const data = await fetch((url), {
-    method: "GET",
-  })
-  return data;
+  return new Promise((resolve), reject) {
+    const data = await fetch((url), {
+      method: "GET",
+    })
+    if (data) {
+      resolve(data);
+    } else {
+      reject();
+    }
+  }
 }
 
 module.exports = router;
