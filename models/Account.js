@@ -22,7 +22,7 @@ const AccountSchema = new mongoose.Schema({
 }, {timestamps: true});
 
 AccountSchema.plugin(require("mongoose-bcrypt"));
-mySchema.plugin(uniqueValidator);
+AccountSchema.plugin(uniqueValidator);
 
 AccountSchema.pre("save", function(next) {
   if(!this.isModified("password")) {
