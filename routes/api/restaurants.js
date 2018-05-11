@@ -31,7 +31,7 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
       };
       const esc = encodeURIComponent;
       const query = Object.keys(searchParams)
-        .map(k => esc(k) + "=" + esc(params[k]))
+        .map(k => esc(k) + "=" + esc(searchParams[k]))
         .join("&");
       console.log("SEARCHING", query);
       const url = baseUrl + query
