@@ -41,11 +41,13 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     const query = Object.keys(params)
       .map(k => esc(k) + "=" + esc(params[k]))
       .join("&");
+      console.log("SEARCHING", query);
     const url = baseUrl + query
     fetch((url), {
       method: "GET"
     }).then(response => response.json())
     .then((responseJson) => {
+      console.log('RESPONSE', responseJson);
         if (!responseJson.response.groups || !responseJson.response.groups[0].items.length) {
           const err = {
             status: 400,
