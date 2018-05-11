@@ -21,7 +21,7 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     const searchGeo = searchAddress ? null : `${latitude},${longitude}`;
     console.log("SEARCH GEO BEFORE", searchGeo);
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
-    await fetchLongLat(searchGeo, searchAddress).then((latLon) => {
+    return fetchLongLat(searchGeo, searchAddress).then((latLon) => {
       console.log("SEARCH GEO AFTER", latLon);
       const searchParams = {
         ll: latLon,
