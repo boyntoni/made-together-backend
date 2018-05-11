@@ -126,7 +126,7 @@ const asyncGeocode = async (lonLat, searchAddress, next) => {
   console.log(responseJson);
   const calculatedLatLon = `${responseJson.results[0].geometry.location.lat},${responseJson.results[0].geometry.location.lng}`;
   if (calculatedLatLon) {
-    return calculatedLonLat;
+    return calculatedLatLon;
   } else {
     throw new Error( { errorMessage: "Unable to fetch location" });
   }
