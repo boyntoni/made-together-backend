@@ -119,7 +119,7 @@ function fetchLongLat(lonLat, searchAddress) {
       console.log("PREPARING TO SEARCH");
       const searchTerm = searchAddress.split(" ").join("+")
       const searchUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${GOOGLE_MAP_KEY}`;
-      fetch(url, {
+      fetch((url), {
         method: "GET",
       }).then((resp) => {
         const calculatedLatLon = `${resp.results[0].geometry.location.lat},${resp.results[0].geometry.location.lng}`;
