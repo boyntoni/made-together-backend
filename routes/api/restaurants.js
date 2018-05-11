@@ -21,7 +21,7 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
     const searchGeo = searchAddress ? null : `${latitude},${longitude}`;
     console.log("SEARCH GEO BEFORE", searchGeo);
     const baseUrl = "https://api.foursquare.com/v2/venues/explore?v=20170801&";
-    await fetchLongLat(searchGeo, searchAddress).then((latLon) => {
+    await fetchLongLat(searchGeo, searchAddress, next).then((latLon) => {
       console.log("SEARCH GEO AFTER", latLon);
       const searchParams = {
         ll: latLon,
@@ -108,7 +108,9 @@ router.post("/restaurants/favorite", auth.required, (req, res, next) => {
   });
 });
 
-async function fetchLongLat(lonLat, searchAddress) {
+function fetchLongLat(lonLat, searchAddress) {
+  return new Promise((resolve, reject) => {
+    console.log("in fetchhh", lonLat);
     if (lonLat) {
       console.log("OOOOOOPPPPSSSSS")
       resolve(lonLat);
@@ -122,8 +124,9 @@ async function fetchLongLat(lonLat, searchAddress) {
         const calculatedLatLon = `${resp.results[0].geometry.location.lat},${resp.results[0].geometry.location.lng}`;
         console.log(calculatedLatLon)
         resolve(calculatedLatLon);
-      }).catch(reject);
+      }).catch(next);
     }
+  })
 }
 
 module.exports = router;
