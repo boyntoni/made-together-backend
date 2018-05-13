@@ -11,6 +11,9 @@ const session = require("express-session");
 const passport = require("passport");
 const methodOverride = require("method-override");
 const server = http.createServer(app);
+const socketIo = require("socket.io");
+const io = socketIo(server);
+const sockets = {};
 
 const port = process.env.PORT || 3000;
 
@@ -21,6 +24,10 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(session({ secret: "conduit", cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
 app.use(helmet());
+app.use(function (req, res, next) {
+  req.io = io;
+  next();
+});
 
 if(isProduction){
   mongoose.connect(process.env.MONGODB_URI);
@@ -45,6 +52,15 @@ app.use(function (err, req, res, next) {
 
 app.get("/", (req, res) => {
   res.send("Connected");
+});
+
+io.on("connection", (socket) => {
+  // console.log("New client connected");
+
+  sockets[socket.id] = socket;
+  socket.emit("apiConnection", socket.id);
+
+  socket.on("disconnect", () => console.log("Client disconnected"));
 });
 
 server.listen(port, () => console.log(`Listening on ${port}`));
