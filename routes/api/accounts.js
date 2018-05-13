@@ -39,8 +39,7 @@ router.post("/accounts/login", (req, res, next)  => {
 });
 
 router.get("/accounts/me", (req, res, next) => {
-  const token = auth.required.getTokenFromHeader(req);
-  console.log(token);
+  const token = req.headers.authorization.split(" ")[1];
   jwt.verify(token, secret, (err, account) => {
     console.log('verified', account)
     if (err) return res.status(500).send({ auth: false, message: "Failed to authenticate token." });
