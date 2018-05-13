@@ -40,17 +40,14 @@ router.post("/accounts/login", (req, res, next)  => {
 
 router.get("/accounts/me", (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
-  jwt.verify(token, secret, (err, account) => {
-    console.log("error", err);
-    console.log("account", account);
+  jwt.verify(token, secret, (err, decoded) => {
     if (err) return res.status(500).send({ auth: false, message: "Failed to authenticate token." });
     if (account) {
-      Account.findById(account._id).then((acc) => {
-        console.loc(acc);
-        return account.fullProfile(acc, res);
+      Account.findById(decoded._id).then((account) => {
+        return account.fullProfile(account, res);
       });
     }
-    // res.status(200).send(decoded);
+    return next(err);
   });
 });
 
