@@ -4,7 +4,7 @@ const passport = require("passport");
 const Account = mongoose.model("Account");
 const auth = require("../auth");
 const jwt = require("jsonwebtoken");
-const secret = require("../config").secret;
+const secret = require("../../config").secret;
 
 
 router.post("/accounts/login", (req, res, next)  => {
@@ -40,9 +40,15 @@ router.post("/accounts/login", (req, res, next)  => {
 
 router.get("/accounts/me", (req, res, next) => {
   const token = auth.required.getTokenFromHeader(req);
-  jwt.verify(token, secret, (err, decoded) => {
+  jwt.verify(token, secret, (err, account) => {
     if (err) return res.status(500).send({ auth: false, message: "Failed to authenticate token." });
+    if (account) {
+      Account.findById(account._id).then((acc) => {
+        return account.fullProfile(acc, res);
+      });
+    }
     console.log("Decoded", decoded);
+
     // res.status(200).send(decoded);
   });
 });
