@@ -44,7 +44,7 @@ router.get("/accounts/me", (req, res, next) => {
     if (err) return res.status(500).send({ auth: false, message: "Failed to authenticate token." });
     if (decoded) {
       console.log("decoded", decoded);
-      Account.findById(decoded._id).then((account) => {
+      Account.findById(decoded.id).then((account) => {
         console.log("account", account);
         return account.fullProfile(account, res);
       });
