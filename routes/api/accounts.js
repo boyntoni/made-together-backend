@@ -42,12 +42,12 @@ router.get("/accounts/me", (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   jwt.verify(token, secret, (err, decoded) => {
     if (err) return res.status(500).send({ auth: false, message: "Failed to authenticate token." });
-    if (account) {
+    if (decoded) {
       Account.findById(decoded._id).then((account) => {
         return account.fullProfile(account, res);
       });
     }
-    return next(err);
+    return next({ errorMessage: "Unable to authenticate"});
   });
 });
 
