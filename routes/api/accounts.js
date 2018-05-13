@@ -39,6 +39,8 @@ router.post("/accounts/login", (req, res, next)  => {
 });
 
 router.get("/accounts/me", (req, res, next) => {
+  console.log("headers", req.headers);
+  console.log("auth", req.headers.authorization);
   const token = req.headers.authorization.split(" ")[1];
   console.log(token, secret)
   jwt.verify(token, secret, (err, account) => {
