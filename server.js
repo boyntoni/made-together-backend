@@ -48,7 +48,7 @@ app.get("/", (req, res) => {
 
 const server = app.listen(process.env.PORT || 3000, () => console.log(`Listening on ${process.env.PORT}`));
 
-export const io = socketio(server);
+const io = socketio(server);
 io.listen(process.env.PORT);
 io.on("connection", (socket) => {
   console.log("Client connected");
