@@ -49,7 +49,7 @@ const server = app.listen(process.env.PORT || 3000, () => console.log(`Listening
 
 const io = socketio(server);
 
-// io.on("connection", (socket) => {
-//   console.log("Client connected");
-//   socket.on("disconnect", () => console.log("Client disconnected"));
-// });
+io.on("connection", (socket) => {
+  console.log("Client connected");
+  socket.on("disconnect", () => console.log("Client disconnected"));
+});
