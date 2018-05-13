@@ -11,6 +11,7 @@ const session = require("express-session");
 const passport = require("passport");
 const methodOverride = require("method-override");
 const socketio = require("socket.io");
+const sockets = {};
 
 const isProduction = process.env.NODE_ENV === "production"
 
@@ -47,8 +48,8 @@ app.get("/", (req, res) => {
 
 const server = app.listen(process.env.PORT || 3000, () => console.log(`Listening on ${process.env.PORT}`));
 
-const io = socketio(server);
-
+export const io = socketio(server);
+io.listen(process.env.PORT);
 io.on("connection", (socket) => {
   console.log("Client connected");
   socket.on("disconnect", () => console.log("Client disconnected"));

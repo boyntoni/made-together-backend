@@ -5,6 +5,7 @@ const Account = mongoose.model("Account");
 const Destination = mongoose.model("Destination");
 const auth = require("../auth");
 const fetch = require("node-fetch");
+const io = require("../../server").io;
 
 router.post("/destinations/add", auth.required, (req, res, next) => {
     Account.findById(req.payload.id).then((account) => {
