@@ -1,8 +1,13 @@
+import getTokenFromHeader from "./auth.js";
+
 const mongoose = require("mongoose");
 const router = require("express").Router();
 const passport = require("passport");
 const Account = mongoose.model("Account");
 const auth = require("../auth");
+const jwt = require("jsonwebtoken");
+const secret = require("../config").secret;
+
 
 router.post("/accounts/login", (req, res, next)  => {
     if(!req.body.username) {
@@ -33,6 +38,15 @@ router.post("/accounts/login", (req, res, next)  => {
         return next(err);
       }
     })(req, res, next);
+});
+
+router.get("/accounts/me", (req, res, next) => {
+  const token = getTokenFromHeader(req);
+  jwt.verify(token, secret, (err, decoded) => {
+    if (err) return res.status(500).send({ auth: false, message: "Failed to authenticate token." });
+    console.log("Decoded", decoded);
+    // res.status(200).send(decoded);
+  });
 });
 
 router.post("/accounts", (req, res, next) => {
