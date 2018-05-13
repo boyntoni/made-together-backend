@@ -1,5 +1,3 @@
-import getTokenFromHeader from "./auth.js";
-
 const mongoose = require("mongoose");
 const router = require("express").Router();
 const passport = require("passport");
@@ -41,7 +39,7 @@ router.post("/accounts/login", (req, res, next)  => {
 });
 
 router.get("/accounts/me", (req, res, next) => {
-  const token = getTokenFromHeader(req);
+  const token = auth.required.getTokenFromHeader(req);
   jwt.verify(token, secret, (err, decoded) => {
     if (err) return res.status(500).send({ auth: false, message: "Failed to authenticate token." });
     console.log("Decoded", decoded);
