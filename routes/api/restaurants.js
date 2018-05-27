@@ -24,7 +24,7 @@ router.post("/restaurants/search", auth.required, (req, res, next) => {
       const searchParams = {
         ll: latLon,
         query: searchTerm,
-        limit: 15,
+        limit: 40,
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET
       };

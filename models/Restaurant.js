@@ -20,10 +20,11 @@ const RestaurantSchema = new mongoose.Schema({
 RestaurantSchema.statics.parseSearch = (restaurants) => {
   return restaurants.map((restaurant) => {
     const restaurantData = restaurant.venue;
+    const safePrice = restaurantData.price && restaurantData.price.tier ? restaurantData.price.tier : 0;
     const newRestaurantData = {
         name: restaurantData.name,
         foursquareId: restaurantData.id,
-        price: restaurantData.price.tier,
+        price: safePrice,
         category: restaurantData.categories[0].shortName,
         categoryId: restaurantData.categories[0].id,
         rating: restaurantData.rating,

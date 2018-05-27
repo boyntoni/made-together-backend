@@ -37,8 +37,8 @@ router.post("/destinations/remove", auth.required, (req, res, next) => {
         const { groupId, itemName } = req.body;
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
-            consoel.log("Deleting destination", itemName);
             Destination.findOneAndRemove({ "name": itemName }).then(() => {
+                console.log("Deleting destination", itemName);
                 return res.send(200);
             });
         }).catch(next);
