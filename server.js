@@ -13,7 +13,6 @@ const methodOverride = require("method-override");
 const server = http.createServer(app);
 const socketIo = require("socket.io");
 const io = socketIo(server);
-const sockets = {};
 
 const port = process.env.PORT || 3000;
 
@@ -22,15 +21,10 @@ const isProduction = process.env.NODE_ENV === "production"
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(methodOverride());
-app.use(session({ secret: "conduit", cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
+app.use(session({ secret: "conduit", cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
 app.use(helmet());
-app.use(function (req, res, next) {
-  req.io = io;
-  req.sockets = sockets;
-  next();
-});
 
-if(isProduction){
+if (isProduction) {
   mongoose.connect(process.env.MONGODB_URI);
 } else {
   mongoose.connect("mongodb://boyntoni:buchillon1*@ds015962.mlab.com:15962/made-together-staging");
@@ -52,9 +46,22 @@ app.use(function (err, req, res, next) {
 });
 
 io.on("connection", (socket) => {
-  sockets[socket.id] = socket;
+  console.log("User Connected");
   socket.emit("apiConnection");
-  socket.on("joinRoom", channelName => socket.join(channelName));
+  socket.on("apiConnectionSuccess", () => {
+    console.log('Connection established');
+  });
+
+  socket.on("joinRoom", (channelName) => {
+    console.log("joining", channelName)
+    socket.join(channelName)
+  });
+
+  socket.on("contentUpdate", channelName => {
+    console.log("Updating content");
+    socket.broadcast.to(channelName).emit("refreshContent");
+  });
+
   socket.on("disconnect", () => console.log("Client disconnected"));
 });
 
