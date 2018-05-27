@@ -26,6 +26,7 @@ app.use(session({ secret: "conduit", cookie: { maxAge: 60000 }, resave: false, s
 app.use(helmet());
 app.use(function (req, res, next) {
   req.io = io;
+  req.sockets = sockets;
   next();
 });
 
@@ -50,16 +51,10 @@ app.use(function (err, req, res, next) {
   res.json(err);
 });
 
-app.get("/", (req, res) => {
-  res.send("Connected");
-});
-
 io.on("connection", (socket) => {
-  // console.log("New client connected");
-
   sockets[socket.id] = socket;
-  socket.emit("apiConnection", socket.id);
-
+  socket.emit("apiConnection");
+  socket.on("joinRoom", channelName => socket.join(channelName));
   socket.on("disconnect", () => console.log("Client disconnected"));
 });
 
