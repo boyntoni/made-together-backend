@@ -45,6 +45,10 @@ app.use(function (err, req, res, next) {
   res.json(err);
 });
 
+app.get("/", (req, res) => {
+  res.send("Connected");
+});
+
 io.on("connection", (socket) => {
   console.log("User Connected");
   socket.emit("apiConnection");
