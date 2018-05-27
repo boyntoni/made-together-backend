@@ -20,7 +20,6 @@ const RestaurantSchema = new mongoose.Schema({
 RestaurantSchema.statics.parseSearch = (restaurants) => {
   return restaurants.map((restaurant) => {
     const restaurantData = restaurant.venue;
-    console.log(restaurantData);
     const safePrice = restaurantData.price && restaurantData.price.tier ? restaurantData.price.tier : 0;
     const newRestaurantData = {
         name: restaurantData.name,
