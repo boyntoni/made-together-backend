@@ -21,7 +21,7 @@ RestaurantSchema.statics.parseSearch = (restaurants) => {
   console.log(restaurants);
   return restaurants.map((restaurant) => {
     const restaurantData = restaurant.venue;
-    const safePrice = restaurantData.price ? restaurant.price.tier : 0;
+    const safePrice = restaurantData.price && restaurantData.price.tier ? restaurant.price.tier : 0;
     const newRestaurantData = {
         name: restaurantData.name,
         foursquareId: restaurantData.id,
