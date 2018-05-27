@@ -108,11 +108,13 @@ GroupSchema.methods.addMovie = function(id){
   });
 };
 
-GroupSchema.methods.removeMovie= function(id) {
+GroupSchema.methods.removeMovie = function(movie) {
   return new Promise((resolve, reject) => {
-    this.movies.remove(id)
+    this.movies.remove(movie._id)
     this.save().then(() => {
-      resolve();
+      movie.remove().then(() => {
+        resolve();
+      });
     }).catch(() => {
       reject();
     });
@@ -134,11 +136,13 @@ GroupSchema.methods.addShow = function(id) {
   });
 };
 
-GroupSchema.methods.removeShow = function(id) {
+GroupSchema.methods.removeShow = function(show) {
   return new Promise((resolve, reject) => {
-    this.shows.remove(id);
+    this.shows.remove(show._id);
     return this.save().then(() => {
-      resolve();
+      show.remove().then(() => {
+        resolve();
+      });
     }).catch(() => {
       reject();
     });
@@ -160,11 +164,13 @@ GroupSchema.methods.addDestination = function(id) {
   });
 };
 
-GroupSchema.methods.removeDestination = function(id) {
+GroupSchema.methods.removeDestination = function(destination) {
   return new Promise((resolve, reject) => {
-    this.destinations.remove(id);
+    this.destinations.remove(destination._id);
     this.save().then(() => {
-      resolve();
+      destination.remove().then(() => {
+        resolve();
+      });
     }).catch(() => {
       reject();
     });

@@ -37,9 +37,11 @@ router.post("/shows/remove", auth.required, (req, res, next) => {
         const { groupId, itemName } = req.body;
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
-            Show.findOneAndRemove({ "name": itemName }).then(() => {
-                console.log("Removed show", itemName);
-                return res.send(200);
+            Show.findOne({ "name": itemName }).then((show) => {
+                group.removeShow(show).then(() => {
+                    console.log("Removed show", itemName);
+                    return res.send(200);
+                });
             });
         }).catch(next);
     });

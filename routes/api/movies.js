@@ -36,9 +36,11 @@ router.post("/movies/remove", auth.required, (req, res, next) => {
         const { groupId, itemName } = req.body;
         Group.findById(groupId).then((group) => {
             if (!group) { return next({ status: 401 }) }
-            Movie.findOneAndRemove({ "name": itemName }).then(() => {
-                console.log("Removed movie", itemName);
-                return res.send(200);
+            Movie.findOne({ "name": itemName }).then((movie) => {
+                group.removeMovie(movie).then(() => {
+                    console.log("Removed movie", itemName);
+                    return res.send(200);
+                });
             });
         }).catch(next);
     });
