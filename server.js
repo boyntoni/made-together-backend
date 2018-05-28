@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
 
   socket.on("contentUpdate", channelName => {
     console.log("Updating content");
-    socket.broadcast.to(channelName).emit("refreshContent");
+    socket.to(channelName).emit("refreshContent");
   });
 
   socket.on("disconnect", () => console.log("Client disconnected"));
