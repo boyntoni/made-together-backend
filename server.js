@@ -62,7 +62,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("contentUpdate", channelName => {
-    console.log("Updating content");
+    console.log("Updating content", channelName);
     socket.to(channelName).emit("refreshContent");
   });
 
